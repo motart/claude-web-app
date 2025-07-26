@@ -1,26 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Paper,
   Typography,
   Card,
   CardContent,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
+import { dataAPI } from '../services/api';
 
 export const Dashboard = () => {
   const { user } = useAuth();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const formatCurrency = (value) => 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
 
-  const mockData = {
-    totalRevenue: 125000,
-    totalOrders: 1250,
-    totalQuantity: 5420,
-    averageOrderValue: 100
-  };
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await dataAPI.getAnalytics({});
+        setDashboardData(response.data.summary || {
+          totalRevenue: 0,
+          totalOrders: 0,
+          totalQuantity: 0,
+          averageOrderValue: 0
+        });
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+        // Set empty data if API fails
+        setDashboardData({
+          totalRevenue: 0,
+          totalOrders: 0,
+          totalQuantity: 0,
+          averageOrderValue: 0
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -29,7 +61,10 @@ export const Dashboard = () => {
           Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Here's what's happening with your retail business today.
+          {dashboardData?.totalOrders > 0 
+            ? "Here's what's happening with your retail business today."
+            : "Get started by uploading sales data or connecting your store."
+          }
         </Typography>
       </Box>
 
@@ -56,7 +91,7 @@ export const Dashboard = () => {
                 </Box>
               </Box>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                {formatCurrency(mockData.totalRevenue)}
+                {formatCurrency(dashboardData?.totalRevenue)}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 +12.5% from last month
@@ -81,7 +116,7 @@ export const Dashboard = () => {
                 </Box>
               </Box>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                {mockData.totalOrders.toLocaleString()}
+                {(dashboardData?.totalOrders || 0).toLocaleString()}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 +8.2% from last month
@@ -106,7 +141,7 @@ export const Dashboard = () => {
                 </Box>
               </Box>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                {mockData.totalQuantity.toLocaleString()}
+                {(dashboardData?.totalQuantity || 0).toLocaleString()}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 +15.3% from last month
@@ -131,7 +166,7 @@ export const Dashboard = () => {
                 </Box>
               </Box>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                {formatCurrency(mockData.averageOrderValue)}
+                {formatCurrency(dashboardData?.averageOrderValue)}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 +3.7% from last month
