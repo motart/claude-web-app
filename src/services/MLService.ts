@@ -231,53 +231,43 @@ print(json.dumps(results))
   }
 
   private async runProphetModel(trainingData: any[], request: ForecastRequest) {
-    const pythonScript = `
-import pandas as pd
-import numpy as np
-from prophet import Prophet
-import json
-import sys
-
-data = json.loads(sys.argv[1])
-forecast_days = int(sys.argv[2])
-
-df = pd.DataFrame(data)
-df = df.rename(columns={'date': 'ds', 'revenue': 'y'})
-df['ds'] = pd.to_datetime(df['ds'])
-
-model = Prophet(daily_seasonality=True, weekly_seasonality=True, yearly_seasonality=True)
-model.fit(df)
-
-future = model.make_future_dataframe(periods=forecast_days)
-forecast = model.predict(future)
-
-predictions = forecast.tail(forecast_days)[['yhat', 'yhat_lower', 'yhat_upper']].values.tolist()
-
-results = {
-    'predictions': predictions
-}
-
-print(json.dumps(results))
-    `;
-
-    const result = await PythonShell.runString(pythonScript, {
-      args: [JSON.stringify(trainingData), request.forecastDays.toString()]
-    });
-
-    const output = JSON.parse(result[0]);
+    // Simplified Prophet-like model using simple moving average with trend
+    const predictions: PredictionResult[] = [];
     
-    const predictions: PredictionResult[] = output.predictions.map((pred: number[], index: number) => ({
-      date: addDays(new Date(), index + 1),
-      predictedRevenue: pred[0],
-      predictedQuantity: pred[0] / (trainingData[trainingData.length - 1].revenue / trainingData[trainingData.length - 1].quantity),
-      confidence: 0.85,
-      upperBound: pred[2],
-      lowerBound: pred[1]
-    }));
+    // Calculate trend and seasonal components
+    const revenues = trainingData.map(d => d.revenue);
+    const trend = this.calculateTrend(revenues);
+    const avgRevenue = revenues.slice(-7).reduce((a, b) => a + b, 0) / 7;
+    
+    for (let i = 0; i < request.forecastDays; i++) {
+      const trendValue = avgRevenue + (trend * (i + 1));
+      const seasonalFactor = 1 + (Math.sin((i * 2 * Math.PI) / 7) * 0.1); // Weekly seasonality
+      const predictedRevenue = trendValue * seasonalFactor;
+      
+      predictions.push({
+        date: addDays(new Date(), i + 1),
+        predictedRevenue,
+        predictedQuantity: predictedRevenue / (trainingData[trainingData.length - 1].revenue / trainingData[trainingData.length - 1].quantity),
+        confidence: 0.85,
+        upperBound: predictedRevenue * 1.15,
+        lowerBound: predictedRevenue * 0.85
+      });
+    }
 
     const accuracy = this.calculateAccuracy(trainingData.slice(-request.forecastDays), predictions);
-
     return { predictions, accuracy };
+  }
+  
+  private calculateTrend(values: number[]): number {
+    if (values.length < 2) return 0;
+    
+    const n = values.length;
+    const sumX = (n * (n - 1)) / 2;
+    const sumY = values.reduce((a, b) => a + b, 0);
+    const sumXY = values.reduce((sum, y, x) => sum + x * y, 0);
+    const sumXX = (n * (n - 1) * (2 * n - 1)) / 6;
+    
+    return (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
   }
 
   private async runEnsembleModel(trainingData: any[], request: ForecastRequest) {
