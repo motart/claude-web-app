@@ -7,35 +7,20 @@ import {
   Button,
   Typography,
   Box,
-  Alert,
   Tab,
   Tabs
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
+function TabPanel({ children, value, index }) {
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
+    <div hidden={value !== index}>
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
 
-export const Login: React.FC = () => {
+export const Login = () => {
   const [tab, setTab] = useState(0);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({
@@ -44,45 +29,24 @@ export const Login: React.FC = () => {
     name: '',
     company: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   
   const { login, register } = useAuth();
   const navigate = useNavigate();
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event, newValue) => {
     setTab(newValue);
-    setError('');
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      await login(loginData.email, loginData.password);
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
+    await login(loginData.email, loginData.password);
+    navigate('/dashboard');
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      await register(registerData);
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
-    } finally {
-      setLoading(false);
-    }
+    await register(registerData);
+    navigate('/dashboard');
   };
 
   return (
@@ -107,7 +71,6 @@ export const Login: React.FC = () => {
             backdropFilter: 'blur(20px)'
           }}
         >
-          {/* Header Section */}
           <Box sx={{ 
             p: 4, 
             background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
@@ -144,22 +107,13 @@ export const Login: React.FC = () => {
             <Tab label="Register" />
           </Tabs>
 
-          {error && (
-            <Box sx={{ px: 3, pt: 2 }}>
-              <Alert severity="error">{error}</Alert>
-            </Box>
-          )}
-
           <TabPanel value={tab} index={0}>
             <Box component="form" onSubmit={handleLogin}>
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                id="email"
                 label="Email Address"
-                name="email"
-                autoComplete="email"
                 autoFocus
                 value={loginData.email}
                 onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
@@ -168,11 +122,8 @@ export const Login: React.FC = () => {
                 margin="normal"
                 required
                 fullWidth
-                name="password"
                 label="Password"
                 type="password"
-                id="password"
-                autoComplete="current-password"
                 value={loginData.password}
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
               />
@@ -181,9 +132,8 @@ export const Login: React.FC = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                disabled={loading}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                Sign In
               </Button>
             </Box>
           </TabPanel>
@@ -194,10 +144,7 @@ export const Login: React.FC = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="name"
                 label="Full Name"
-                name="name"
-                autoComplete="name"
                 value={registerData.name}
                 onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
               />
@@ -205,9 +152,7 @@ export const Login: React.FC = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="company"
                 label="Company"
-                name="company"
                 value={registerData.company}
                 onChange={(e) => setRegisterData({ ...registerData, company: e.target.value })}
               />
@@ -215,10 +160,7 @@ export const Login: React.FC = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="register-email"
                 label="Email Address"
-                name="email"
-                autoComplete="email"
                 value={registerData.email}
                 onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
               />
@@ -226,11 +168,8 @@ export const Login: React.FC = () => {
                 margin="normal"
                 required
                 fullWidth
-                name="password"
                 label="Password"
                 type="password"
-                id="register-password"
-                autoComplete="new-password"
                 value={registerData.password}
                 onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
               />
@@ -239,14 +178,13 @@ export const Login: React.FC = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                disabled={loading}
               >
-                {loading ? 'Creating Account...' : 'Create Account'}
+                Create Account
               </Button>
             </Box>
           </TabPanel>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };

@@ -114,57 +114,178 @@ export const Dashboard: React.FC = () => {
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>
-        Sales Dashboard
-      </Typography>
+    <Box>
+      {/* Welcome Section */}
+      <Box mb={4}>
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+          Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          Here's what's happening with your retail business today.
+        </Typography>
+      </Box>
 
       {/* Summary Cards */}
-      <Grid container spacing={3} mb={3}>
+      <Grid container spacing={3} mb={4}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Revenue
-              </Typography>
-              <Typography variant="h5" component="div">
+          <Card sx={{ 
+            height: '100%',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 100,
+              height: 100,
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: '50%'
+            }
+          }}>
+            <CardContent sx={{ position: 'relative', zIndex: 1 }}>
+              <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Total Revenue
+                </Typography>
+                <Box sx={{ 
+                  p: 1, 
+                  borderRadius: 2, 
+                  backgroundColor: 'rgba(255,255,255,0.2)' 
+                }}>
+                  💰
+                </Box>
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 {formatCurrency(data.summary.totalRevenue)}
               </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                +12.5% from last month
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
+        
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Orders
-              </Typography>
-              <Typography variant="h5" component="div">
+          <Card sx={{ 
+            height: '100%',
+            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            color: 'white',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 100,
+              height: 100,
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: '50%'
+            }
+          }}>
+            <CardContent sx={{ position: 'relative', zIndex: 1 }}>
+              <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Total Orders
+                </Typography>
+                <Box sx={{ 
+                  p: 1, 
+                  borderRadius: 2, 
+                  backgroundColor: 'rgba(255,255,255,0.2)' 
+                }}>
+                  📦
+                </Box>
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 {data.summary.totalOrders.toLocaleString()}
               </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                +8.2% from last month
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
+        
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Quantity
-              </Typography>
-              <Typography variant="h5" component="div">
+          <Card sx={{ 
+            height: '100%',
+            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            color: 'white',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 100,
+              height: 100,
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: '50%'
+            }
+          }}>
+            <CardContent sx={{ position: 'relative', zIndex: 1 }}>
+              <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Items Sold
+                </Typography>
+                <Box sx={{ 
+                  p: 1, 
+                  borderRadius: 2, 
+                  backgroundColor: 'rgba(255,255,255,0.2)' 
+                }}>
+                  📊
+                </Box>
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 {data.summary.totalQuantity.toLocaleString()}
               </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                +15.3% from last month
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
+        
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Avg Order Value
-              </Typography>
-              <Typography variant="h5" component="div">
+          <Card sx={{ 
+            height: '100%',
+            background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+            color: 'white',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 100,
+              height: 100,
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: '50%'
+            }
+          }}>
+            <CardContent sx={{ position: 'relative', zIndex: 1 }}>
+              <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Avg Order Value
+                </Typography>
+                <Box sx={{ 
+                  p: 1, 
+                  borderRadius: 2, 
+                  backgroundColor: 'rgba(255,255,255,0.2)' 
+                }}>
+                  💳
+                </Box>
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 {formatCurrency(data.summary.averageOrderValue)}
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                +3.7% from last month
               </Typography>
             </CardContent>
           </Card>
