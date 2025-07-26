@@ -11,7 +11,7 @@ RUN npm run build
 FROM node:18-alpine
 
 RUN apk add --no-cache python3 py3-pip
-RUN pip3 install pandas numpy scikit-learn tensorflow prophet statsmodels
+RUN pip3 install --break-system-packages pandas numpy scikit-learn prophet statsmodels
 
 WORKDIR /app
 
