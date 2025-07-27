@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
-import * as rds from 'aws-cdk-lib/aws-rds';
+import * as docdb from 'aws-cdk-lib/aws-docdb';
 import * as elasticache from 'aws-cdk-lib/aws-elasticache';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -41,22 +41,18 @@ export class RetailForecastStack extends cdk.Stack {
     );
 
     // DocumentDB (MongoDB compatible)
-    const dbCluster = new rds.DatabaseCluster(this, 'RetailForecastDB', {
-      engine: rds.DatabaseClusterEngine.auroraMongoDb({
-        version: rds.AuroraMongoDbEngineVersion.VER_4_0_0
-      }),
-      instanceProps: {
-        instanceType: ec2.InstanceType.of(ec2.InstanceClass.R5, ec2.InstanceSize.LARGE),
-        vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
-        },
-        vpc,
-        securityGroups: [dbSecurityGroup]
+    const dbCluster = new docdb.DatabaseCluster(this, 'RetailForecastDB', {
+      masterUser: {
+        username: 'admin'
       },
-      instances: 2,
-      credentials: rds.Credentials.fromGeneratedSecret('admin', {
-        secretName: 'retail-forecast-db-credentials'
-      })
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
+      },
+      vpc,
+      securityGroup: dbSecurityGroup,
+      engineVersion: '4.0.0',
+      instances: 1
     });
 
     // ElastiCache Redis
@@ -119,17 +115,17 @@ export class RetailForecastStack extends cdk.Stack {
       memoryLimitMiB: 2048,
       desiredCount: 2,
       taskImageOptions: {
-        image: ecs.ContainerImage.fromRegistry('retail-forecast-app:latest'),
+        image: ecs.ContainerImage.fromAsset('../'),
         containerPort: 3000,
         taskRole,
         environment: {
           NODE_ENV: 'production',
           AWS_REGION: this.region,
           S3_BUCKET: dataBucket.bucketName,
-          REDIS_HOST: redisCluster.attrRedisEndpointAddress
+          REDIS_HOST: redisCluster.attrRedisEndpointAddress,
+          MONGODB_URI: `mongodb://${dbCluster.clusterEndpoint.hostname}:${dbCluster.clusterEndpoint.port}/retailforecast`
         },
         secrets: {
-          MONGODB_URI: ecs.Secret.fromSecretsManager(dbCluster.secret!, 'engine'),
           JWT_SECRET: ecs.Secret.fromSecretsManager(appSecrets, 'JWT_SECRET'),
           SHOPIFY_CLIENT_SECRET: ecs.Secret.fromSecretsManager(appSecrets, 'SHOPIFY_CLIENT_SECRET'),
           AMAZON_SECRET_KEY: ecs.Secret.fromSecretsManager(appSecrets, 'AMAZON_SECRET_KEY')
@@ -141,7 +137,11 @@ export class RetailForecastStack extends cdk.Stack {
     });
 
     fargateService.service.connections.allowTo(dbCluster, ec2.Port.tcp(27017));
-    fargateService.service.connections.allowTo(redisCluster, ec2.Port.tcp(6379));
+    dbSecurityGroup.addIngressRule(
+      fargateService.service.connections.securityGroups[0],
+      ec2.Port.tcp(6379),
+      'Allow app to connect to Redis'
+    );
 
     // Auto Scaling
     const scaling = fargateService.service.autoScaleTaskCount({
