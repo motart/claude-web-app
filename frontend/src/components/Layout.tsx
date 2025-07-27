@@ -40,6 +40,7 @@ import {
   Person as PersonIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import { Chatbot } from './Chatbot';
 
 const drawerWidth = 280;
 
@@ -459,6 +460,9 @@ export const Layout: React.FC = () => {
           <Outlet />
         </Box>
       </Box>
+      
+      {/* Chatbot */}
+      <Chatbot />
     </Box>
   );
 };

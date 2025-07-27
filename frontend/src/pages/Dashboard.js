@@ -1,16 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Grid,
   Paper,
   Typography,
   Card,
   CardContent,
-  Box
+  Box,
+  Button
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
 export const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const formatCurrency = (value) => 
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
@@ -32,6 +35,13 @@ export const Dashboard = () => {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           Welcome to OrderNimbus! Get started by uploading sales data or connecting your store.
         </Typography>
+        <Button 
+          variant="outlined" 
+          onClick={() => navigate('/onboarding')}
+          sx={{ mb: 2 }}
+        >
+          🧪 Test Onboarding Flow
+        </Button>
       </Box>
 
       <Grid container spacing={3} mb={4}>
