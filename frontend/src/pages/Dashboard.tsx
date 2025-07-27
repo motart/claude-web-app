@@ -229,8 +229,54 @@ export const Dashboard: React.FC = () => {
     return <Alert severity="error">{error}</Alert>;
   }
 
-  if (!data) {
-    return <Alert severity="info">No data available</Alert>;
+  if (!data || data.summary.totalRevenue === 0) {
+    return (
+      <Box>
+        {/* Welcome Section */}
+        <Box mb={4}>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+            Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Let's get your retail analytics started.
+          </Typography>
+        </Box>
+
+        <Box sx={{ 
+          textAlign: 'center', 
+          py: 8,
+          px: 3,
+          maxWidth: 600,
+          mx: 'auto'
+        }}>
+          <Box sx={{ fontSize: 64, mb: 3 }}>📊</Box>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+            No Data Yet
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+            Start by uploading your sales data or connecting your e-commerce platforms to see analytics and insights.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+            <Button 
+              variant="contained" 
+              size="large"
+              onClick={() => navigate('/data')}
+              sx={{ px: 4 }}
+            >
+              Upload Data
+            </Button>
+            <Button 
+              variant="outlined" 
+              size="large"
+              onClick={() => navigate('/connectors')}
+              sx={{ px: 4 }}
+            >
+              Connect Platforms
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    );
   }
 
   return (

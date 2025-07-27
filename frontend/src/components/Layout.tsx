@@ -57,13 +57,6 @@ const menuItems = [
     badge: null
   },
   { 
-    text: 'Profile', 
-    icon: <PersonIcon />, 
-    path: '/profile',
-    description: 'User Profile & Settings',
-    badge: null
-  },
-  { 
     text: 'Data Ingestion', 
     icon: <CloudUpload />, 
     path: '/data',
@@ -90,6 +83,13 @@ const menuItems = [
     path: '/customer-service',
     description: 'Chatbot Analytics & ML',
     badge: 'AI'
+  },
+  { 
+    text: 'Settings', 
+    icon: <SettingsIcon />, 
+    path: '/settings',
+    description: 'Account & Preferences',
+    badge: null
   }
 ];
 
@@ -272,23 +272,7 @@ export const Layout: React.FC = () => {
       <Box sx={{ p: 2 }}>
         <List>
           <ListItem
-            onClick={() => {
-              navigate('/settings');
-              if (isMobile) setMobileOpen(false);
-            }}
-            sx={{
-              borderRadius: 2,
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: alpha(theme.palette.text.primary, 0.04) }
-            }}
-          >
-            <ListItemIcon sx={{ minWidth: 44 }}>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-          </ListItem>
-          <ListItem
-            onClick={() => {}}
+            onClick={() => window.open('https://docs.ordernimbus.com', '_blank')}
             sx={{
               borderRadius: 2,
               cursor: 'pointer',
@@ -298,7 +282,7 @@ export const Layout: React.FC = () => {
             <ListItemIcon sx={{ minWidth: 44 }}>
               <HelpIcon />
             </ListItemIcon>
-            <ListItemText primary="Help & Support" />
+            <ListItemText primary="Help & Docs" />
           </ListItem>
         </List>
       </Box>
@@ -401,28 +385,6 @@ export const Layout: React.FC = () => {
                   {user?.email}
                 </Typography>
               </Box>
-              
-              <MenuItem onClick={() => {
-                navigate('/settings');
-                handleMenuClose();
-              }}>
-                <ListItemIcon>
-                  <AccountIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Profile Settings</ListItemText>
-              </MenuItem>
-              
-              <MenuItem onClick={() => {
-                navigate('/settings');
-                handleMenuClose();
-              }}>
-                <ListItemIcon>
-                  <SettingsIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Account Settings</ListItemText>
-              </MenuItem>
-              
-              <Divider />
               
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon>

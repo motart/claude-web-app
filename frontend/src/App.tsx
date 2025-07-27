@@ -10,7 +10,7 @@ import { Dashboard } from './pages/Dashboard';
 import { DataIngestion } from './pages/DataIngestion';
 import { Forecasting } from './pages/Forecasting';
 import { Connectors } from './pages/Connectors';
-import { ProfileSettings } from './pages/ProfileSettings';
+import { Settings } from './pages/Settings';
 import { Onboarding } from './pages/Onboarding';
 import { CustomerService } from './pages/CustomerService';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -149,12 +149,11 @@ function App() {
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="profile" element={<ProfileSettings />} />
               <Route path="data" element={<DataIngestion />} />
               <Route path="forecasting" element={<Forecasting />} />
               <Route path="connectors" element={<Connectors />} />
               <Route path="customer-service" element={<CustomerService />} />
-              <Route path="settings" element={<ProfileSettings />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>
           </Router>
