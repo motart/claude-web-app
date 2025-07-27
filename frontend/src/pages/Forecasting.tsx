@@ -17,7 +17,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Tabs,
+  Tab,
+  Chip
 } from '@mui/material';
 import {
   LineChart,
@@ -30,6 +33,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { forecastAPI, connectorAPI } from '../services/api';
+import { AdvancedForecasting } from '../components/AdvancedForecasting';
 
 interface Store {
   platform: string;
@@ -68,6 +72,7 @@ export const Forecasting: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
   const [newForecast, setNewForecast] = useState({
     storeId: '',
     modelType: 'ensemble',
@@ -128,17 +133,40 @@ export const Forecasting: React.FC = () => {
     new Date(dateString).toLocaleDateString();
 
   return (
-    <Box p={3}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">Sales Forecasting</Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => setDialogOpen(true)}
-          disabled={stores.length === 0}
-        >
-          Generate New Forecast
-        </Button>
+    <Box>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}>
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Basic Forecasting
+                <Chip label="Legacy" size="small" color="default" />
+              </Box>
+            } 
+          />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Advanced AI Forecasting
+                <Chip label="95%+ Accuracy" size="small" color="success" />
+              </Box>
+            } 
+          />
+        </Tabs>
       </Box>
+
+      {tabValue === 0 && (
+        <Box p={3}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+            <Typography variant="h4">Sales Forecasting</Typography>
+            <Button 
+              variant="contained" 
+              onClick={() => setDialogOpen(true)}
+              disabled={stores.length === 0}
+            >
+              Generate New Forecast
+            </Button>
+          </Box>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
@@ -374,6 +402,10 @@ export const Forecasting: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+        </Box>
+      )}
+
+      {tabValue === 1 && <AdvancedForecasting />}
     </Box>
   );
 };
