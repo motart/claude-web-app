@@ -64,7 +64,16 @@ export const Login: React.FC = () => {
       await login(loginData.email, loginData.password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+      console.error('Login error:', err);
+      if (err.response?.status === 401) {
+        setError('Invalid email or password. Please try again.');
+      } else if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.request) {
+        setError('Unable to connect to server. Please check your connection.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -79,7 +88,16 @@ export const Login: React.FC = () => {
       await register(registerData);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed');
+      console.error('Registration error:', err);
+      if (err.response?.status === 400) {
+        setError(err.response.data.error || 'Invalid registration data. Please check your inputs.');
+      } else if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.request) {
+        setError('Unable to connect to server. Please check your connection.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

@@ -1,58 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Grid,
   Paper,
   Typography,
   Card,
   CardContent,
-  Box,
-  CircularProgress
+  Box
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
-import { dataAPI } from '../services/api';
 
 export const Dashboard = () => {
   const { user } = useAuth();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   const formatCurrency = (value) => 
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await dataAPI.getAnalytics({});
-        setDashboardData(response.data.summary || {
-          totalRevenue: 0,
-          totalOrders: 0,
-          totalQuantity: 0,
-          averageOrderValue: 0
-        });
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
-        // Set empty data if API fails
-        setDashboardData({
-          totalRevenue: 0,
-          totalOrders: 0,
-          totalQuantity: 0,
-          averageOrderValue: 0
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // Start with empty data - user will need to upload data or connect stores
+  const dashboardData = {
+    totalRevenue: 0,
+    totalOrders: 0,
+    totalQuantity: 0,
+    averageOrderValue: 0
+  };
 
   return (
     <Box>
@@ -61,10 +30,7 @@ export const Dashboard = () => {
           Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          {dashboardData?.totalOrders > 0 
-            ? "Here's what's happening with your retail business today."
-            : "Get started by uploading sales data or connecting your store."
-          }
+          Get started by uploading sales data or connecting your store.
         </Typography>
       </Box>
 

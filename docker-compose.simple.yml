@@ -13,8 +13,7 @@ services:
       - app
 
   app:
-    image: node:18-alpine
-    working_dir: /app
+    build: .
     ports:
       - "3000:3000"
     environment:
@@ -23,14 +22,12 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/retailforecast
       - REDIS_URL=redis://redis:6379
     volumes:
-      - ./package.json:/app/package.json
-      - ./package-lock.json:/app/package-lock.json
-      - ./src:/app/src
-      - ./tsconfig.json:/app/tsconfig.json
-    command: sh -c "npm install && npx tsc && node dist/index.js"
+      - ./uploads:/app/uploads
     depends_on:
-      - mongo
-      - redis
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   mongo:
     image: mongo:6.0
@@ -38,11 +35,23 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongo_data:
+  redis_data:
