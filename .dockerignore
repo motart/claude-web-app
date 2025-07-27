@@ -26,3 +26,7 @@ frontend/*.log
 src/node_modules
 *.tgz
 .yarn-integrity
+
+# Exclude AWS CDK files
+aws-cdk
+cdk.out

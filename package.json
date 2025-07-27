@@ -1,7 +1,7 @@
 {
-  "name": "retail-forecast-app",
+  "name": "ordernimbus-app",
   "version": "1.0.0",
-  "description": "AI-powered sales forecasting platform for retail stores",
+  "description": "AI-powered sales forecasting and inventory management platform",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -47,12 +47,13 @@
   },
   "keywords": [
     "sales-forecasting",
+    "inventory-management",
     "machine-learning",
     "retail",
     "e-commerce",
     "shopify",
     "amazon"
   ],
-  "author": "Retail Forecast Team",
+  "author": "OrderNimbus Team",
   "license": "MIT"
 }

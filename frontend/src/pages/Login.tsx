@@ -86,7 +86,7 @@ export const Login: React.FC = () => {
 
     try {
       await register(registerData);
-      navigate('/dashboard');
+      navigate('/onboarding');
     } catch (err: any) {
       console.error('Registration error:', err);
       if (err.response?.status === 400) {
@@ -139,21 +139,43 @@ export const Login: React.FC = () => {
                 mx: 'auto',
                 mb: 2,
                 borderRadius: 3,
-                background: 'rgba(255,255,255,0.2)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '2rem',
-                fontWeight: 'bold'
+                fontSize: '1.8rem',
+                fontWeight: 'bold',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '20%',
+                  right: '20%',
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.6)',
+                },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '30%',
+                  left: '25%',
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.4)',
+                }
               }}
             >
-              RF
+              ☁️
             </Box>
             <Typography component="h1" variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-              Retail Forecast
+              OrderNimbus
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              AI-Powered Sales Analytics Platform
+              Smart Inventory & Sales Management
             </Typography>
           </Box>
           

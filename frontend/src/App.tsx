@@ -9,6 +9,8 @@ import { Dashboard } from './pages/Dashboard';
 import { DataIngestion } from './pages/DataIngestion';
 import { Forecasting } from './pages/Forecasting';
 import { Connectors } from './pages/Connectors';
+import { ProfileSettings } from './pages/ProfileSettings';
+import { Onboarding } from './pages/Onboarding';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 const theme = createTheme({
@@ -140,12 +142,14 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="data" element={<DataIngestion />} />
               <Route path="forecasting" element={<Forecasting />} />
               <Route path="connectors" element={<Connectors />} />
+              <Route path="settings" element={<ProfileSettings />} />
             </Route>
           </Routes>
         </Router>

@@ -30,7 +30,7 @@ export const Dashboard = () => {
           Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Get started by uploading sales data or connecting your store.
+          Welcome to OrderNimbus! Get started by uploading sales data or connecting your store.
         </Typography>
       </Box>
 

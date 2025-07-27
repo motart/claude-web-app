@@ -120,14 +120,14 @@ export const Layout: React.FC = () => {
               fontSize: '1.25rem'
             }}
           >
-            RF
+            ON
           </Box>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1 }}>
-              Retail Forecast
+              OrderNimbus
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              AI-Powered Analytics
+              Smart Inventory & Sales
             </Typography>
           </Box>
         </Box>
@@ -238,7 +238,10 @@ export const Layout: React.FC = () => {
       <Box sx={{ p: 2 }}>
         <List>
           <ListItem
-            onClick={() => {}}
+            onClick={() => {
+              navigate('/settings');
+              if (isMobile) setMobileOpen(false);
+            }}
             sx={{
               borderRadius: 2,
               cursor: 'pointer',
@@ -359,14 +362,20 @@ export const Layout: React.FC = () => {
                 </Typography>
               </Box>
               
-              <MenuItem onClick={handleMenuClose}>
+              <MenuItem onClick={() => {
+                navigate('/settings');
+                handleMenuClose();
+              }}>
                 <ListItemIcon>
                   <AccountIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Profile Settings</ListItemText>
               </MenuItem>
               
-              <MenuItem onClick={handleMenuClose}>
+              <MenuItem onClick={() => {
+                navigate('/settings');
+                handleMenuClose();
+              }}>
                 <ListItemIcon>
                   <SettingsIcon fontSize="small" />
                 </ListItemIcon>
