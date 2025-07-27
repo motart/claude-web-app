@@ -37,7 +37,8 @@ import {
   TrendingUp,
   Analytics,
   CloudUpload,
-  Person as PersonIcon
+  Person as PersonIcon,
+  Support as SupportIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { Chatbot } from './Chatbot';
@@ -79,6 +80,13 @@ const menuItems = [
     path: '/connectors',
     description: 'Platform Integrations',
     badge: null
+  },
+  { 
+    text: 'Customer Service', 
+    icon: <SupportIcon />, 
+    path: '/customer-service',
+    description: 'Chatbot Analytics & ML',
+    badge: 'AI'
   }
 ];
 

@@ -60,34 +60,34 @@ const consoleFormat = winston.format.combine(
 
 // File rotation configuration for compliance
 const fileRotateTransport = new DailyRotateFile({
-  filename: path.join(process.env.LOG_DIR || './logs', 'application-%DATE%.log'),
+  filename: path.join(process.env.LOG_DIR || '/app/logs', 'application-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '100m',
   maxFiles: '90d', // Keep logs for 90 days (SOC 2 requirement)
   zippedArchive: true,
-  auditFile: path.join(process.env.LOG_DIR || './logs', 'audit.json'),
+  auditFile: path.join(process.env.LOG_DIR || '/app/logs', 'audit.json'),
 });
 
 // Security log file (separate for security events)
 const securityFileTransport = new DailyRotateFile({
-  filename: path.join(process.env.LOG_DIR || './logs', 'security-%DATE%.log'),
+  filename: path.join(process.env.LOG_DIR || '/app/logs', 'security-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '100m',
   maxFiles: '365d', // Keep security logs for 1 year
   zippedArchive: true,
   level: 'security',
-  auditFile: path.join(process.env.LOG_DIR || './logs', 'security-audit.json'),
+  auditFile: path.join(process.env.LOG_DIR || '/app/logs', 'security-audit.json'),
 });
 
 // Audit log file (separate for audit trail)
 const auditFileTransport = new DailyRotateFile({
-  filename: path.join(process.env.LOG_DIR || './logs', 'audit-%DATE%.log'),
+  filename: path.join(process.env.LOG_DIR || '/app/logs', 'audit-%DATE%.log'),
   datePattern: 'YYYY-MM-DD',
   maxSize: '100m',
   maxFiles: '2555d', // Keep audit logs for 7 years (compliance requirement)
   zippedArchive: true,
   level: 'audit',
-  auditFile: path.join(process.env.LOG_DIR || './logs', 'audit-trail.json'),
+  auditFile: path.join(process.env.LOG_DIR || '/app/logs', 'audit-trail.json'),
 });
 
 // Create logger instance
@@ -112,7 +112,7 @@ export const logger = winston.createLogger({
     
     // Error logs (separate file for easier monitoring)
     new DailyRotateFile({
-      filename: path.join(process.env.LOG_DIR || './logs', 'error-%DATE%.log'),
+      filename: path.join(process.env.LOG_DIR || '/app/logs', 'error-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       level: 'error',
       maxSize: '100m',
@@ -122,12 +122,12 @@ export const logger = winston.createLogger({
   ],
   exceptionHandlers: [
     new winston.transports.File({
-      filename: path.join(process.env.LOG_DIR || './logs', 'exceptions.log')
+      filename: path.join(process.env.LOG_DIR || '/app/logs', 'exceptions.log')
     })
   ],
   rejectionHandlers: [
     new winston.transports.File({
-      filename: path.join(process.env.LOG_DIR || './logs', 'rejections.log')
+      filename: path.join(process.env.LOG_DIR || '/app/logs', 'rejections.log')
     })
   ],
   exitOnError: false

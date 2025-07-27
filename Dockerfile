@@ -19,6 +19,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 
+# Create logs directory and set permissions
+RUN mkdir -p logs && chown -R node:node /app
+
 EXPOSE 3000
 
 USER node

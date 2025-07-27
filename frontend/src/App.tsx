@@ -11,6 +11,7 @@ import { Forecasting } from './pages/Forecasting';
 import { Connectors } from './pages/Connectors';
 import { ProfileSettings } from './pages/ProfileSettings';
 import { Onboarding } from './pages/Onboarding';
+import { CustomerService } from './pages/CustomerService';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 const theme = createTheme({
@@ -150,6 +151,7 @@ function App() {
               <Route path="data" element={<DataIngestion />} />
               <Route path="forecasting" element={<Forecasting />} />
               <Route path="connectors" element={<Connectors />} />
+              <Route path="customer-service" element={<CustomerService />} />
               <Route path="settings" element={<ProfileSettings />} />
             </Route>
           </Routes>
