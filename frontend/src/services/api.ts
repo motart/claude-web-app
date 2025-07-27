@@ -69,6 +69,51 @@ export const forecastAPI = {
   
   deleteForecast: (id: string) =>
     apiClient.delete(`/forecast/${id}`),
+
+  // Advanced ML API endpoints
+  generateAdvancedForecast: (data: {
+    storeId: string;
+    forecastDays: number;
+    modelConfig?: any;
+    features?: string[];
+    hyperparameterOptimization?: boolean;
+  }) =>
+    apiClient.post('/forecast/advanced-generate', data),
+
+  getModelPerformance: (forecastId: string) =>
+    apiClient.get(`/forecast/${forecastId}/performance`),
+
+  optimizeModel: (data: {
+    storeId: string;
+    modelType: string;
+    trials?: number;
+    trainingPeriodDays: number;
+  }) =>
+    apiClient.post('/forecast/optimize-model', data),
+
+  getFeatureImportance: (forecastId: string) =>
+    apiClient.get(`/forecast/${forecastId}/feature-importance`),
+
+  backtestModel: (data: {
+    storeId: string;
+    modelConfig: any;
+    backtestPeriods: number;
+  }) =>
+    apiClient.post('/forecast/backtest', data),
+
+  getRealtimePrediction: (storeId: string, targetDate: string) =>
+    apiClient.get(`/forecast/realtime/${storeId}`, { 
+      params: { targetDate } 
+    }),
+
+  trainCustomModel: (data: {
+    storeId: string;
+    features: any[];
+    target: string;
+    modelType: string;
+    hyperparameters: Record<string, any>;
+  }) =>
+    apiClient.post('/forecast/train-custom', data),
 };
 
 export const connectorAPI = {
