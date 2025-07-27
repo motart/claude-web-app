@@ -36,7 +36,8 @@ import {
   Help as HelpIcon,
   TrendingUp,
   Analytics,
-  CloudUpload
+  CloudUpload,
+  Person as PersonIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -48,6 +49,13 @@ const menuItems = [
     icon: <DashboardIcon />, 
     path: '/dashboard',
     description: 'Overview & Analytics',
+    badge: null
+  },
+  { 
+    text: 'Profile', 
+    icon: <PersonIcon />, 
+    path: '/profile',
+    description: 'User Profile & Settings',
     badge: null
   },
   { 
