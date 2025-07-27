@@ -286,7 +286,7 @@ export const Login: React.FC = () => {
             </Box>
           </TabPanel>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };

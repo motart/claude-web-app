@@ -177,6 +177,7 @@ const platformOptions = [
 export const Onboarding: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  
   const theme = useTheme();
   
   const [activeStep, setActiveStep] = useState(0);

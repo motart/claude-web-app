@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import path from 'path';
 import { authRoutes } from './routes/auth';
 import { dataIngestionRoutes } from './routes/dataIngestion';
 import { forecastRoutes } from './routes/forecast';
@@ -32,6 +33,30 @@ app.use('/api/connectors', connectorRoutes);
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Serve static files from React build
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  
+  // Handle React routing, return all requests to React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  });
+} else {
+  // In development, serve a simple message for non-API routes
+  app.get('*', (req, res) => {
+    res.status(404).json({ 
+      error: 'Route not found',
+      message: 'This is the API server. The frontend should be running on port 3001.',
+      availableRoutes: [
+        'GET /health',
+        'POST /api/auth/login',
+        'POST /api/auth/register',
+        'GET /api/auth/me'
+      ]
+    });
+  });
+}
 
 app.use(errorHandler);
 

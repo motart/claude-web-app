@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Grid,
   Paper,
@@ -7,8 +7,10 @@ import {
   CardContent,
   Box,
   CircularProgress,
-  Alert
+  Alert,
+  Button
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import {
   LineChart,
   Line,
@@ -26,6 +28,8 @@ import {
 } from 'recharts';
 import { dataAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { PageSearch } from '../components/PageSearch';
+import { SearchResult, SearchResultType } from '../types/search';
 
 interface DashboardData {
   summary: {
@@ -70,9 +74,12 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -94,6 +101,122 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  const handleSearch = useCallback(async (query: string, filters: any) => {
+    if (!query.trim() || !data) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const results: SearchResult[] = [];
+      const lowerQuery = query.toLowerCase();
+
+      // Search dashboard metrics
+      const metrics = [
+        { id: 'revenue', title: 'Total Revenue', value: data.summary.totalRevenue, description: 'Total revenue across all channels' },
+        { id: 'orders', title: 'Total Orders', value: data.summary.totalOrders, description: 'Number of completed orders' },
+        { id: 'items', title: 'Items Sold', value: data.summary.totalQuantity, description: 'Total quantity of items sold' },
+        { id: 'aov', title: 'Average Order Value', value: data.summary.averageOrderValue, description: 'Average value per order' }
+      ];
+
+      metrics.forEach(metric => {
+        if (metric.title.toLowerCase().includes(lowerQuery) || 
+            metric.description.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            id: metric.id,
+            title: metric.title,
+            description: metric.description,
+            type: 'dashboard_metric' as SearchResultType,
+            category: 'Dashboard',
+            url: '/dashboard',
+            score: 0.9,
+            metadata: { value: metric.value },
+            tags: ['metric', 'dashboard']
+          });
+        }
+      });
+
+      // Search top products
+      data.topProducts.forEach(product => {
+        if (product._id.productName.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            id: product._id.productId,
+            title: product._id.productName,
+            description: `Revenue: ${formatCurrency(product.revenue)}, Quantity: ${product.quantity}`,
+            type: 'product' as SearchResultType,
+            category: 'Products',
+            url: '/dashboard',
+            score: 0.8,
+            metadata: { revenue: product.revenue, quantity: product.quantity },
+            tags: ['product', 'revenue']
+          });
+        }
+      });
+
+      // Search categories
+      data.categoryBreakdown.forEach(category => {
+        if (category._id.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            id: `category_${category._id}`,
+            title: `${category._id} Category`,
+            description: `Revenue: ${formatCurrency(category.revenue)}, Orders: ${category.orders}`,
+            type: 'dashboard_metric' as SearchResultType,
+            category: 'Categories',
+            url: '/dashboard',
+            score: 0.7,
+            metadata: { revenue: category.revenue, orders: category.orders },
+            tags: ['category', 'revenue']
+          });
+        }
+      });
+
+      // Search insights
+      data.insights.forEach((insight, index) => {
+        if (insight.message.toLowerCase().includes(lowerQuery)) {
+          results.push({
+            id: `insight_${index}`,
+            title: 'Business Insight',
+            description: insight.message,
+            type: 'insight' as SearchResultType,
+            category: 'Insights',
+            url: '/dashboard',
+            score: 0.6,
+            metadata: { type: insight.type, value: insight.value },
+            tags: ['insight', insight.type]
+          });
+        }
+      });
+
+      // Apply filters
+      let filteredResults = results;
+      if (filters.types && filters.types.length > 0) {
+        filteredResults = filteredResults.filter(result => 
+          filters.types.includes(result.type)
+        );
+      }
+
+      if (filters.category) {
+        filteredResults = filteredResults.filter(result => 
+          result.category === filters.category
+        );
+      }
+
+      filteredResults.sort((a, b) => b.score - a.score);
+      setSearchResults(filteredResults);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [data]);
+
+  const formatCurrency = (value: number) => 
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
@@ -110,9 +233,6 @@ export const Dashboard: React.FC = () => {
     return <Alert severity="info">No data available</Alert>;
   }
 
-  const formatCurrency = (value: number) => 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
-
   return (
     <Box>
       {/* Welcome Section */}
@@ -123,6 +243,19 @@ export const Dashboard: React.FC = () => {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           Here's what's happening with your retail business today.
         </Typography>
+        
+        {/* Dashboard Search */}
+        <PageSearch
+          placeholder="Search dashboard metrics, products, categories, and insights..."
+          onSearch={handleSearch}
+          results={searchResults}
+          isLoading={isSearching}
+          availableFilters={{
+            types: ['dashboard_metric', 'product', 'insight'],
+            categories: ['Dashboard', 'Products', 'Categories', 'Insights']
+          }}
+          compact
+        />
       </Box>
 
       {/* Summary Cards */}

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
+import { SearchProvider } from './contexts/SearchContext';
 import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -140,7 +141,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <Router>
+        <SearchProvider>
+          <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
@@ -155,7 +157,8 @@ function App() {
               <Route path="settings" element={<ProfileSettings />} />
             </Route>
           </Routes>
-        </Router>
+          </Router>
+        </SearchProvider>
       </AuthProvider>
     </ThemeProvider>
   );

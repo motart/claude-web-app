@@ -51,7 +51,7 @@ import {
   SmartToy as BotIcon,
   Person as PersonIcon,
   Schedule as ScheduleIcon,
-  Sentiment as SentimentIcon
+  Mood as SentimentIcon
 } from '@mui/icons-material';
 import {
   LineChart,

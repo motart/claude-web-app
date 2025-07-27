@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   AppBar,
@@ -38,10 +38,13 @@ import {
   Analytics,
   CloudUpload,
   Person as PersonIcon,
-  Support as SupportIcon
+  Support as SupportIcon,
+  Search as SearchIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import { useSearch } from '../contexts/SearchContext';
 import { Chatbot } from './Chatbot';
+import { GlobalSearch } from './GlobalSearch';
 
 const drawerWidth = 280;
 
@@ -94,6 +97,7 @@ export const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { isGlobalSearchOpen, setGlobalSearchOpen } = useSearch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
@@ -117,6 +121,19 @@ export const Layout: React.FC = () => {
     navigate('/login');
     handleMenuClose();
   };
+
+  // Global search keyboard shortcut (Cmd+K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault();
+        setGlobalSearchOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [setGlobalSearchOpen]);
 
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -324,6 +341,12 @@ export const Layout: React.FC = () => {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="Search (⌘K)">
+              <IconButton onClick={() => setGlobalSearchOpen(true)}>
+                <SearchIcon />
+              </IconButton>
+            </Tooltip>
+            
             <Tooltip title="Notifications">
               <IconButton>
                 <Badge badgeContent={3} color="error">
@@ -471,6 +494,12 @@ export const Layout: React.FC = () => {
       
       {/* Chatbot */}
       <Chatbot />
+      
+      {/* Global Search */}
+      <GlobalSearch 
+        open={isGlobalSearchOpen} 
+        onClose={() => setGlobalSearchOpen(false)} 
+      />
     </Box>
   );
 };
