@@ -74,19 +74,59 @@
         </div>
     </section>
 
-    <!-- Demo Section -->
-    <section class="content-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>See OrderNimbus in Action</h2>
-                <p>Watch our 5-minute demo to see how enterprise retailers are achieving 94%+ forecast accuracy</p>
-            </div>
-            <div style="text-align: center; margin: 2rem 0;">
-                <div style="background: #f1f5f9; padding: 3rem; border-radius: 12px; max-width: 600px; margin: 0 auto;">
-                    <h3>🎥 Interactive Demo</h3>
-                    <p>See real forecasting results and platform capabilities</p>
-                    <a href="/demo" class="btn btn-primary">Watch Demo</a>
+    <!-- Interactive Video Demo Section -->
+    <section class="video-demo-section">
+        <div class="video-demo-content">
+            <h2 class="video-demo-title">🎥 See OrderNimbus in Action</h2>
+            <p class="video-demo-subtitle">Watch our interactive demo to see how enterprise retailers achieve 94%+ forecast accuracy and 340% ROI in their first year</p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <button class="play-button" aria-label="Play OrderNimbus Demo Video">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </button>
+                    <div class="video-overlay-text">
+                        <h3>OrderNimbus Demo</h3>
+                        <p>3 minutes • See live forecasting in action</p>
+                    </div>
                 </div>
+                <div class="video-player"></div>
+            </div>
+            
+            <div class="video-stats">
+                <div class="video-stat">
+                    <div class="video-stat-number">94%</div>
+                    <div class="video-stat-label">Forecast Accuracy</div>
+                </div>
+                <div class="video-stat">
+                    <div class="video-stat-number">340%</div>
+                    <div class="video-stat-label">Average ROI</div>
+                </div>
+                <div class="video-stat">
+                    <div class="video-stat-number">3</div>
+                    <div class="video-stat-label">Weeks to Deploy</div>
+                </div>
+                <div class="video-stat">
+                    <div class="video-stat-number">24/7</div>
+                    <div class="video-stat-label">Support</div>
+                </div>
+            </div>
+            
+            <div class="demo-cta-buttons">
+                <button class="btn-watch-demo" onclick="document.querySelector('.video-placeholder').click()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Watch Interactive Demo
+                </button>
+                <a href="#contact-form" class="btn-schedule-demo">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                    </svg>
+                    Schedule Live Demo
+                </a>
             </div>
         </div>
     </section>

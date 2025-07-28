@@ -129,7 +129,11 @@ export const Connectors: React.FC = () => {
   };
 
   const handleSync = async (storeId: string) => {
-    setSyncingStores(prev => new Set([...prev, storeId]));
+    setSyncingStores(prev => {
+      const newSet = new Set(prev);
+      newSet.add(storeId);
+      return newSet;
+    });
     setError('');
     setSuccess('');
 
@@ -346,16 +350,18 @@ export const Connectors: React.FC = () => {
                   )}
                   
                   <Box display="flex" gap={1}>
-                    <Button
-                      variant="outlined"
-                      startIcon={syncingStores.has(store.storeId) ? <CircularProgress size={16} /> : <Sync />}
-                      onClick={() => handleSync(store.storeId)}
-                      disabled={syncingStores.has(store.storeId)}
-                      size="small"
-                      flex={1}
-                    >
-                      {syncingStores.has(store.storeId) ? 'Syncing...' : 'Sync Now'}
-                    </Button>
+                    <Box flex={1}>
+                      <Button
+                        variant="outlined"
+                        startIcon={syncingStores.has(store.storeId) ? <CircularProgress size={16} /> : <Sync />}
+                        onClick={() => handleSync(store.storeId)}
+                        disabled={syncingStores.has(store.storeId)}
+                        size="small"
+                        fullWidth
+                      >
+                        {syncingStores.has(store.storeId) ? 'Syncing...' : 'Sync Now'}
+                      </Button>
+                    </Box>
                     <IconButton 
                       onClick={() => handleDisconnect(store.storeId)}
                       size="small"

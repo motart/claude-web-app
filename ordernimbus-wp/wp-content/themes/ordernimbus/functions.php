@@ -22,7 +22,13 @@ function ordernimbus_scripts() {
     
     // Enqueue How It Works specific styles
     if (is_page('how-it-works')) {
-        wp_enqueue_style('how-it-works-style', get_template_directory_uri() . '/css/how-it-works.css', array('ordernimbus-style'), '1.0.0');
+        wp_enqueue_style('how-it-works-style', get_template_directory_uri() . '/css/how-it-works-v2.css', array('ordernimbus-style'), '1.0.0');
+    }
+    
+    // Enqueue Contact page video demo styles and scripts
+    if (is_page('contact')) {
+        wp_enqueue_style('video-demo-style', get_template_directory_uri() . '/css/video-demo.css', array('ordernimbus-style'), '1.0.0');
+        wp_enqueue_script('video-demo-script', get_template_directory_uri() . '/js/video-demo.js', array('jquery'), '1.0.0', true);
     }
 }
 add_action('wp_enqueue_scripts', 'ordernimbus_scripts');
