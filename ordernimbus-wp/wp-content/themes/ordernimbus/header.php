@@ -26,7 +26,11 @@
                     <li><a href="/contact">Contact</a></li>
                 </ul>
             </nav>
-            <a href="/contact" class="btn btn-primary">Get Started</a>
+            <div class="header-actions">
+                <a href="https://app.ordernimbus.com" class="btn btn-primary" target="_blank" rel="noopener">
+                    Get Started
+                </a>
+            </div>
         </div>
     </div>
 </header>

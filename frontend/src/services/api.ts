@@ -117,6 +117,11 @@ export const forecastAPI = {
 };
 
 export const connectorAPI = {
+  // Shopify OAuth flow
+  initShopifyOAuth: (data: { shop: string; storeName: string }) =>
+    apiClient.post('/connectors/shopify/oauth/init', data),
+  
+  // Legacy direct connection (for stores that already have access tokens)
   connectShopify: (data: any) =>
     apiClient.post('/connectors/shopify/connect', data),
   
@@ -131,4 +136,12 @@ export const connectorAPI = {
   
   disconnectStore: (storeId: string) =>
     apiClient.delete(`/connectors/stores/${storeId}`),
+  
+  // Get sync history for a store
+  getSyncHistory: (storeId?: string) =>
+    apiClient.get('/connectors/sync-history', { params: { storeId } }),
+  
+  // Sync all active stores
+  syncAllStores: () =>
+    apiClient.post('/connectors/sync-all'),
 };

@@ -31,6 +31,24 @@ export class ShopifyConnector {
     });
   }
 
+  async exchangeCodeForToken(shopDomain: string, code: string, clientSecret: string): Promise<any> {
+    try {
+      const response = await this.client.post(
+        `https://${shopDomain}.myshopify.com/admin/oauth/access_token`,
+        {
+          client_id: process.env.SHOPIFY_CLIENT_ID,
+          client_secret: clientSecret,
+          code
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Shopify token exchange failed:', error);
+      throw new Error('Failed to exchange code for access token');
+    }
+  }
+
   async validateConnection(shopDomain: string, accessToken: string): Promise<boolean> {
     try {
       const response = await this.client.get(
@@ -46,6 +64,24 @@ export class ShopifyConnector {
     } catch (error) {
       console.error('Shopify connection validation failed:', error);
       return false;
+    }
+  }
+
+  async getShopInfo(shopDomain: string, accessToken: string): Promise<any> {
+    try {
+      const response = await this.client.get(
+        `https://${shopDomain}.myshopify.com/admin/api/2023-10/shop.json`,
+        {
+          headers: {
+            'X-Shopify-Access-Token': accessToken
+          }
+        }
+      );
+      
+      return response.data.shop;
+    } catch (error) {
+      console.error('Failed to fetch shop info:', error);
+      throw new Error('Failed to fetch shop information');
     }
   }
 
@@ -115,21 +151,31 @@ export class ShopifyConnector {
 
     for (const order of orders) {
       for (const lineItem of order.line_items) {
+        // Calculate cost based on line item price (estimate 70% margin)
+        const revenue = parseFloat(lineItem.price) * lineItem.quantity;
+        const estimatedCost = revenue * 0.7; // 70% of revenue as cost estimate
+
         salesData.push({
           userId,
           storeId,
           platform: 'shopify',
-          productId: lineItem.product_id.toString(),
+          productId: lineItem.product_id?.toString() || lineItem.sku || `unknown-${Date.now()}`,
           productName: lineItem.title,
-          sku: lineItem.sku,
+          category: 'E-commerce', // Default category, could be enhanced with product type
+          sku: lineItem.sku || '',
           date: new Date(order.created_at),
           quantity: lineItem.quantity,
-          revenue: parseFloat(lineItem.price) * lineItem.quantity,
-          currency: order.currency,
+          revenue,
+          cost: estimatedCost,
+          currency: order.currency || 'USD',
           metadata: {
             orderId: order.id,
             customerId: order.customer?.id,
-            customerLocation: order.customer?.location
+            customerLocation: order.customer?.location,
+            orderTotalPrice: parseFloat(order.total_price),
+            lineItemId: lineItem.id,
+            source: 'shopify_api',
+            syncedAt: new Date()
           }
         });
       }

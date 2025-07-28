@@ -34,6 +34,7 @@ import {
   Settings as SettingsIcon,
   Notifications as NotificationsIcon,
   Help as HelpIcon,
+  OpenInNew as OpenInNewIcon,
   TrendingUp,
   Analytics,
   CloudUpload,
@@ -167,37 +168,6 @@ export const Layout: React.FC = () => {
         </Box>
       </Box>
 
-      {/* User Info */}
-      <Box sx={{ p: 3, borderBottom: `1px solid ${theme.palette.divider}` }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Avatar 
-            sx={{ 
-              bgcolor: theme.palette.primary.main,
-              width: 48,
-              height: 48,
-              fontSize: '1.25rem',
-              fontWeight: 600
-            }}
-          >
-            {user?.name?.charAt(0) || 'U'}
-          </Avatar>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.5 }}>
-              {user?.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {user?.company}
-            </Typography>
-            <Chip 
-              label={user?.role} 
-              size="small" 
-              color="primary" 
-              variant="outlined"
-              sx={{ mt: 1, textTransform: 'capitalize' }}
-            />
-          </Box>
-        </Box>
-      </Box>
 
       {/* Navigation */}
       <List sx={{ flex: 1, px: 2, py: 3 }}>
@@ -272,7 +242,22 @@ export const Layout: React.FC = () => {
       <Box sx={{ p: 2 }}>
         <List>
           <ListItem
-            onClick={() => window.open('https://docs.ordernimbus.com', '_blank')}
+            onClick={() => {
+              const docsUrl = process.env.REACT_APP_DOCS_URL || 
+                (process.env.NODE_ENV === 'production' 
+                  ? 'https://docs.ordernimbus.com' 
+                  : 'http://localhost:3002');
+              
+              // Try to open docs, with fallback
+              const newWindow = window.open(docsUrl, '_blank');
+              
+              // If popup blocked or fails, provide alternative
+              setTimeout(() => {
+                if (!newWindow || newWindow.closed) {
+                  alert(`Documentation is available at: ${docsUrl}\n\nPlease allow popups or navigate to the URL manually.`);
+                }
+              }, 1000);
+            }}
             sx={{
               borderRadius: 2,
               cursor: 'pointer',
@@ -282,7 +267,15 @@ export const Layout: React.FC = () => {
             <ListItemIcon sx={{ minWidth: 44 }}>
               <HelpIcon />
             </ListItemIcon>
-            <ListItemText primary="Help & Docs" />
+            <ListItemText 
+              primary={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  Help & Docs
+                  <OpenInNewIcon sx={{ fontSize: 16, opacity: 0.7 }} />
+                </Box>
+              }
+              secondary="View API documentation"
+            />
           </ListItem>
         </List>
       </Box>

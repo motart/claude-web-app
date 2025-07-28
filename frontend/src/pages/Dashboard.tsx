@@ -24,9 +24,16 @@ import {
   Bar,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  AreaChart,
+  Area,
+  ComposedChart,
+  ScatterChart,
+  Scatter,
+  RadialBarChart,
+  RadialBar
 } from 'recharts';
-import { dataAPI } from '../services/api';
+import { dataAPI, forecastAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { PageSearch } from '../components/PageSearch';
 import { SearchResult, SearchResultType } from '../types/search';
@@ -80,10 +87,62 @@ export const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [forecast, setForecast] = useState<any>(null);
+  const [forecastLoading, setForecastLoading] = useState(false);
+  const [generatingForecast, setGeneratingForecast] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
+    fetchLatestForecast();
+
+    // Listen for data upload events to auto-refresh dashboard
+    const handleDataUploaded = (event: CustomEvent) => {
+      console.log('Data uploaded, refreshing dashboard...', event.detail);
+      setTimeout(() => {
+        fetchDashboardData();
+      }, 1000); // Small delay to ensure data is processed
+    };
+
+    window.addEventListener('dataUploaded', handleDataUploaded as EventListener);
+
+    return () => {
+      window.removeEventListener('dataUploaded', handleDataUploaded as EventListener);
+    };
   }, []);
+
+  const fetchLatestForecast = async () => {
+    try {
+      setForecastLoading(true);
+      const response = await forecastAPI.getForecasts({ limit: 1, storeId: 'main-store' });
+      if (response.data.forecasts.length > 0) {
+        setForecast(response.data.forecasts[0]);
+      }
+    } catch (err) {
+      console.error('Error fetching forecast:', err);
+    } finally {
+      setForecastLoading(false);
+    }
+  };
+
+  const generateNewForecast = async () => {
+    try {
+      setGeneratingForecast(true);
+      const response = await forecastAPI.generateForecast({
+        storeId: 'main-store',
+        forecastDays: 30,
+        modelConfig: {
+          modelType: 'ensemble',
+          forecastType: 'daily',
+          trainingPeriodDays: 365
+        }
+      });
+      setForecast(response.data.forecast);
+    } catch (err) {
+      console.error('Error generating forecast:', err);
+    } finally {
+      setGeneratingForecast(false);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -495,87 +554,406 @@ export const Dashboard: React.FC = () => {
 
       {/* Charts */}
       <Grid container spacing={3}>
-        {/* Revenue Trend */}
+        {/* Revenue & Orders Trend with Area Chart */}
         <Grid item xs={12} lg={8}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Revenue Trend (Last 30 Days)
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              📈 Revenue & Orders Trend (Last 30 Days)
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.trends}>
-                <CartesianGrid strokeDasharray="3 3" />
+            <ResponsiveContainer width="100%" height={350}>
+              <ComposedChart data={data.trends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
                   dataKey="date" 
-                  tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                  tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  stroke="#666"
                 />
-                <YAxis tickFormatter={formatCurrency} />
+                <YAxis yAxisId="revenue" orientation="left" tickFormatter={formatCurrency} stroke="#8884d8" />
+                <YAxis yAxisId="orders" orientation="right" stroke="#82ca9d" />
                 <Tooltip 
                   labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                  formatter={(value: number) => [formatCurrency(value), 'Revenue']}
+                  formatter={(value: number, name: string) => [
+                    name === 'revenue' ? formatCurrency(value) : value.toLocaleString(),
+                    name === 'revenue' ? 'Revenue' : name === 'orders' ? 'Orders' : 'Quantity'
+                  ]}
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                 />
                 <Legend />
-                <Line 
+                <Area 
+                  yAxisId="revenue"
                   type="monotone" 
                   dataKey="revenue" 
                   stroke="#8884d8" 
-                  strokeWidth={2}
+                  fill="url(#colorRevenue)"
+                  strokeWidth={3}
                   name="Revenue"
                 />
-              </LineChart>
+                <Bar 
+                  yAxisId="orders"
+                  dataKey="orders" 
+                  fill="#82ca9d" 
+                  name="Orders"
+                  radius={[2, 2, 0, 0]}
+                />
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+              </ComposedChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
 
-        {/* Category Breakdown */}
+        {/* Category Breakdown with Enhanced Pie Chart */}
         <Grid item xs={12} lg={4}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Revenue by Category
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              🏷️ Revenue by Category
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={350}>
               <PieChart>
                 <Pie
-                  data={data.categoryBreakdown.slice(0, 5)}
+                  data={data.categoryBreakdown.slice(0, 6)}
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  labelLine={false}
+                  label={({ _id, percent }) => `${_id} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={120}
                   fill="#8884d8"
                   dataKey="revenue"
                   nameKey="_id"
-                  label={({ _id, value }) => `${_id}: ${formatCurrency(value)}`}
                 >
-                  {data.categoryBreakdown.slice(0, 5).map((entry, index) => (
+                  {data.categoryBreakdown.slice(0, 6).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                <Tooltip 
+                  formatter={(value: number) => [formatCurrency(value), 'Revenue']}
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
 
-        {/* Top Products */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Top Products by Revenue
+        {/* Daily Performance Scatter Plot */}
+        <Grid item xs={12} lg={6}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              📊 Daily Performance (Revenue vs Orders)
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.topProducts.slice(0, 10)}>
-                <CartesianGrid strokeDasharray="3 3" />
+              <ScatterChart data={data.trends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
-                  dataKey="_id.productName" 
-                  angle={-45}
-                  textAnchor="end"
-                  height={100}
+                  type="number" 
+                  dataKey="orders" 
+                  name="Orders"
+                  stroke="#666"
                 />
-                <YAxis tickFormatter={formatCurrency} />
+                <YAxis 
+                  type="number" 
+                  dataKey="revenue" 
+                  name="Revenue"
+                  tickFormatter={formatCurrency}
+                  stroke="#666"
+                />
+                <Tooltip 
+                  cursor={{ strokeDasharray: '3 3' }}
+                  formatter={(value: number, name: string) => [
+                    name === 'revenue' ? formatCurrency(value) : value.toLocaleString(),
+                    name === 'revenue' ? 'Revenue' : 'Orders'
+                  ]}
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Scatter dataKey="revenue" fill="#8884d8" />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Quantity Trends */}
+        <Grid item xs={12} lg={6}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              📦 Quantity Sold Trend
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={data.trends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  stroke="#666"
+                />
+                <YAxis 
+                  tickFormatter={(value) => value.toLocaleString()}
+                  stroke="#666"
+                />
+                <Tooltip 
+                  labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                  formatter={(value: number) => [value.toLocaleString(), 'Quantity']}
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="quantity" 
+                  stroke="#82ca9d" 
+                  fill="url(#colorQuantity)"
+                  strokeWidth={2}
+                />
+                <defs>
+                  <linearGradient id="colorQuantity" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
+                  </linearGradient>
+                </defs>
+              </AreaChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Top Products - Horizontal Bar Chart */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              🏆 Top Products by Revenue
+            </Typography>
+            <ResponsiveContainer width="100%" height={400}>
+              <ComposedChart 
+                data={data.topProducts.slice(0, 12)}
+                layout="horizontal"
+                margin={{ top: 20, right: 30, bottom: 20, left: 100 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis 
+                  type="number"
+                  tickFormatter={formatCurrency}
+                  stroke="#666"
+                />
+                <YAxis 
+                  type="category"
+                  dataKey="_id.productName" 
+                  width={100}
+                  tick={{ fontSize: 12 }}
+                  stroke="#666"
+                />
+                <Tooltip 
+                  formatter={(value: number, name: string) => [
+                    name === 'revenue' ? formatCurrency(value) : value.toLocaleString(),
+                    name === 'revenue' ? 'Revenue' : 'Quantity'
+                  ]}
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Bar 
+                  dataKey="revenue" 
+                  fill="#8884d8"
+                  radius={[0, 4, 4, 0]}
+                  name="Revenue"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="quantity" 
+                  stroke="#ff7300" 
+                  strokeWidth={2}
+                  name="Quantity"
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Category Performance Radial Chart */}
+        <Grid item xs={12} lg={6}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              🎯 Category Performance
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" data={data.categoryBreakdown.slice(0, 5)}>
+                <RadialBar 
+                  dataKey="revenue" 
+                  cornerRadius={4} 
+                  fill="#8884d8"
+                />
                 <Tooltip 
                   formatter={(value: number) => [formatCurrency(value), 'Revenue']}
+                  contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                 />
-                <Bar dataKey="revenue" fill="#8884d8" />
-              </BarChart>
+              </RadialBarChart>
             </ResponsiveContainer>
+          </Paper>
+        </Grid>
+
+        {/* Quick Stats Grid */}
+        <Grid item xs={12} lg={6}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+              📈 Quick Statistics
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Box sx={{ p: 2, backgroundColor: 'primary.main', color: 'white', borderRadius: 2 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                    {Math.round(data.summary.totalRevenue / data.summary.totalOrders)}
+                  </Typography>
+                  <Typography variant="body2">Avg Revenue/Order</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ p: 2, backgroundColor: 'success.main', color: 'white', borderRadius: 2 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                    {Math.round(data.summary.totalQuantity / data.summary.totalOrders)}
+                  </Typography>
+                  <Typography variant="body2">Avg Items/Order</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ p: 2, backgroundColor: 'warning.main', color: 'white', borderRadius: 2 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                    {data.topProducts.length}
+                  </Typography>
+                  <Typography variant="body2">Active Products</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ p: 2, backgroundColor: 'info.main', color: 'white', borderRadius: 2 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                    {data.categoryBreakdown.length}
+                  </Typography>
+                  <Typography variant="body2">Categories</Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+
+        {/* ML Predictions Section */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                🤖 AI Sales Predictions
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={generateNewForecast}
+                disabled={generatingForecast}
+                sx={{ px: 3 }}
+              >
+                {generatingForecast ? 'Generating...' : 'Generate New Forecast'}
+              </Button>
+            </Box>
+
+            {forecastLoading ? (
+              <Box display="flex" justifyContent="center" p={4}>
+                <CircularProgress />
+              </Box>
+            ) : forecast ? (
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={8}>
+                  <Box>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                      Next 30 Days Sales Forecast
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={forecast.predictions?.slice(0, 30) || []}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="date"
+                          tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                        />
+                        <YAxis tickFormatter={formatCurrency} />
+                        <Tooltip 
+                          labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                          formatter={(value: number, name: string) => [
+                            name === 'predictedRevenue' ? formatCurrency(value) : value.toFixed(0),
+                            name === 'predictedRevenue' ? 'Predicted Revenue' : 'Confidence Bounds'
+                          ]}
+                        />
+                        <Legend />
+                        <Line 
+                          type="monotone" 
+                          dataKey="predictedRevenue" 
+                          stroke="#2196f3" 
+                          strokeWidth={3}
+                          name="Predicted Revenue"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="upperBound" 
+                          stroke="#4caf50" 
+                          strokeDasharray="5 5"
+                          name="Upper Bound"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="lowerBound" 
+                          stroke="#ff9800" 
+                          strokeDasharray="5 5"
+                          name="Lower Bound"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Box>
+                </Grid>
+                
+                <Grid item xs={12} md={4}>
+                  <Box>
+                    <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                      Forecast Details
+                    </Typography>
+                    <Box sx={{ p: 2, backgroundColor: 'grey.50', borderRadius: 2, mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary">Model Type</Typography>
+                      <Typography variant="h6" sx={{ textTransform: 'uppercase' }}>
+                        {forecast.modelType}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ p: 2, backgroundColor: 'grey.50', borderRadius: 2, mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary">Accuracy</Typography>
+                      <Typography variant="h6">
+                        {forecast.accuracy?.r2Score ? `${(forecast.accuracy.r2Score * 100).toFixed(1)}%` : 'N/A'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ p: 2, backgroundColor: 'grey.50', borderRadius: 2, mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary">Next 7 Days Total</Typography>
+                      <Typography variant="h6" color="primary">
+                        {forecast.predictions ? 
+                          formatCurrency(
+                            forecast.predictions.slice(0, 7).reduce((sum: number, pred: any) => sum + pred.predictedRevenue, 0)
+                          ) : 'N/A'
+                        }
+                      </Typography>
+                    </Box>
+                    
+                    <Typography variant="caption" color="text.secondary">
+                      Generated: {forecast.generatedAt ? new Date(forecast.generatedAt).toLocaleString() : 'N/A'}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            ) : (
+              <Box textAlign="center" py={4}>
+                <Typography variant="body1" color="text.secondary" mb={2}>
+                  No sales predictions available yet.
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={3}>
+                  Generate AI-powered sales forecasts based on your historical data using advanced machine learning models.
+                </Typography>
+                <Button
+                  variant="outlined"
+                  onClick={generateNewForecast}
+                  disabled={generatingForecast}
+                  size="large"
+                >
+                  Generate First Forecast
+                </Button>
+              </Box>
+            )}
           </Paper>
         </Grid>
       </Grid>

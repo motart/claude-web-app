@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -9,7 +9,8 @@ import {
   Box,
   Alert,
   Tab,
-  Tabs
+  Tabs,
+  Divider
 } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -285,6 +286,21 @@ export const Login: React.FC = () => {
               </Button>
             </Box>
           </TabPanel>
+
+          {/* Footer with legal links */}
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Divider sx={{ mb: 2 }} />
+            <Typography variant="body2" color="text.secondary">
+              By using OrderNimbus, you agree to our{' '}
+              <Link to="/terms" style={{ color: '#2563eb', textDecoration: 'none' }}>
+                Terms of Service
+              </Link>
+              {' '}and{' '}
+              <Link to="/privacy" style={{ color: '#2563eb', textDecoration: 'none' }}>
+                Privacy Policy
+              </Link>
+            </Typography>
+          </Box>
         </Paper>
       </Container>
     </Box>

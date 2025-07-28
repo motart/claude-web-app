@@ -40,6 +40,33 @@
     </div>
 </footer>
 
+<!-- Floating CTA Button -->
+<div class="floating-cta" id="floating-cta">
+    <a href="https://app.ordernimbus.com" class="floating-btn" target="_blank" rel="noopener">
+        <span class="floating-btn-text">Get Started</span>
+        <span class="floating-btn-icon">→</span>
+    </a>
+</div>
+
+<script>
+// Show/hide floating CTA based on scroll position
+window.addEventListener('scroll', function() {
+    const floatingCta = document.getElementById('floating-cta');
+    const heroSection = document.querySelector('.hero');
+    
+    if (heroSection) {
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const scrollPosition = window.scrollY;
+        
+        if (scrollPosition > heroBottom) {
+            floatingCta.classList.add('visible');
+        } else {
+            floatingCta.classList.remove('visible');
+        }
+    }
+});
+</script>
+
 <?php wp_footer(); ?>
 </body>
 </html>

@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
 import { SearchProvider } from './contexts/SearchContext';
 import { Layout } from './components/Layout';
+import { CookieConsent } from './components/CookieConsent';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { DataIngestion } from './pages/DataIngestion';
@@ -13,6 +14,9 @@ import { Connectors } from './pages/Connectors';
 import { Settings } from './pages/Settings';
 import { Onboarding } from './pages/Onboarding';
 import { CustomerService } from './pages/CustomerService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import { PrivacySettings } from './pages/PrivacySettings';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 const theme = createTheme({
@@ -145,6 +149,8 @@ function App() {
           <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
               <Route index element={<Navigate to="/dashboard" replace />} />
@@ -154,8 +160,10 @@ function App() {
               <Route path="connectors" element={<Connectors />} />
               <Route path="customer-service" element={<CustomerService />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="privacy-settings" element={<PrivacySettings />} />
             </Route>
           </Routes>
+          <CookieConsent />
           </Router>
         </SearchProvider>
       </AuthProvider>

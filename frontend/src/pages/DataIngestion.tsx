@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -17,527 +17,522 @@ import {
   Paper,
   Chip,
   IconButton,
-  Tooltip
+  Tooltip,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Tabs,
+  Tab,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TextField
 } from '@mui/material';
 import { 
   CloudUpload,
   Visibility as ViewIcon,
   Download as DownloadIcon,
   Delete as DeleteIcon,
-  Sync as SyncIcon
+  Sync as SyncIcon,
+  Store as StoreIcon,
+  GetApp as TemplateIcon,
+  CheckCircle as CheckIcon,
+  Error as ErrorIcon,
+  Warning as WarningIcon,
+  Upload as UploadIcon
 } from '@mui/icons-material';
 import { dataAPI } from '../services/api';
-import { PageSearch } from '../components/PageSearch';
-import { SearchResult, SearchResultType } from '../types/search';
+import StoreManager from '../components/StoreManager';
 
-interface DataSource {
-  id: string;
+interface Store {
+  _id: string;
   name: string;
-  type: 'csv' | 'api' | 'manual';
-  source: string;
-  status: 'active' | 'inactive' | 'error' | 'syncing';
-  recordCount: number;
-  lastSync: Date;
-  tags: string[];
+  type: string;
+  address?: any;
+  contact?: any;
+  settings: any;
+  metadata: any;
+  isActive: boolean;
+  createdAt: string;
 }
 
-interface Upload {
-  id: string;
-  filename: string;
-  uploadDate: Date;
-  status: 'completed' | 'processing' | 'failed';
-  recordCount: number;
-  errorCount: number;
-  fileSize: string;
+interface UploadResult {
+  message: string;
+  imported: number;
+  total: number;
+  errors: number;
+  errorDetails?: Array<{
+    row: number;
+    error: string;
+    data?: any;
+  }>;
+  summary: {
+    totalRows: number;
+    validRows: number;
+    importedRows: number;
+    errorRows: number;
+  };
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`data-tabpanel-${index}`}
+      aria-labelledby={`data-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  );
 }
 
 export const DataIngestion: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState<any>(null);
-  const [error, setError] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
 
-  // Mock data
-  const dataSources: DataSource[] = [
-    {
-      id: 'ds1',
-      name: 'Shopify Store Data',
-      type: 'api',
-      source: 'Shopify',
-      status: 'active',
-      recordCount: 15420,
-      lastSync: new Date('2024-01-26T10:30:00'),
-      tags: ['ecommerce', 'sales', 'real-time']
-    },
-    {
-      id: 'ds2',
-      name: 'Amazon Marketplace Orders',
-      type: 'api',
-      source: 'Amazon',
-      status: 'active',
-      recordCount: 8932,
-      lastSync: new Date('2024-01-26T09:15:00'),
-      tags: ['marketplace', 'orders', 'automated']
-    },
-    {
-      id: 'ds3',
-      name: 'Manual Sales Import',
-      type: 'csv',
-      source: 'CSV Upload',
-      status: 'inactive',
-      recordCount: 2456,
-      lastSync: new Date('2024-01-24T14:22:00'),
-      tags: ['manual', 'historical', 'csv']
-    },
-    {
-      id: 'ds4',
-      name: 'POS System Data',
-      type: 'api',
-      source: 'Square POS',
-      status: 'error',
-      recordCount: 1234,
-      lastSync: new Date('2024-01-25T16:45:00'),
-      tags: ['pos', 'in-store', 'offline']
+  async function handleDownloadTemplate() {
+    try {
+      const response = await fetch('/api/stores/templates/csv', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sales-data-template.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        setError('Failed to download template');
+      }
+    } catch (err) {
+      setError('Error downloading template');
     }
-  ];
+  }
 
-  const recentUploads: Upload[] = [
-    {
-      id: 'up1',
-      filename: 'Q4_sales_data.csv',
-      uploadDate: new Date('2024-01-26T08:30:00'),
-      status: 'completed',
-      recordCount: 5420,
-      errorCount: 0,
-      fileSize: '2.3 MB'
-    },
-    {
-      id: 'up2',
-      filename: 'inventory_levels.xlsx',
-      uploadDate: new Date('2024-01-25T15:22:00'),
-      status: 'processing',
-      recordCount: 1250,
-      errorCount: 0,
-      fileSize: '890 KB'
-    },
-    {
-      id: 'up3',
-      filename: 'customer_data.csv',
-      uploadDate: new Date('2024-01-24T11:15:00'),
-      status: 'failed',
-      recordCount: 0,
-      errorCount: 125,
-      fileSize: '1.1 MB'
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+
+  const handleStoreSelect = (store: Store) => {
+    setSelectedStore(store);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setError(null);
     }
-  ];
+  };
 
-  const handleSearch = useCallback(async (query: string, filters: any) => {
-    if (!query.trim()) {
-      setSearchResults([]);
+  const handleDrop = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    setDragOver(false);
+    
+    const droppedFile = event.dataTransfer.files[0];
+    if (droppedFile) {
+      if (droppedFile.type === 'text/csv' || droppedFile.name.endsWith('.csv')) {
+        setFile(droppedFile);
+        setError(null);
+      } else {
+        setError('Please select a CSV file');
+      }
+    }
+  }, []);
+
+  const handleDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    setDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    setDragOver(false);
+  }, []);
+
+  const handleUpload = async () => {
+    if (!file || !selectedStore) {
+      setError('Please select a file and store');
       return;
     }
 
-    setIsSearching(true);
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      const results: SearchResult[] = [];
-      const lowerQuery = query.toLowerCase();
-
-      // Search data sources
-      dataSources.forEach(source => {
-        if (source.name.toLowerCase().includes(lowerQuery) || 
-            source.source.toLowerCase().includes(lowerQuery) ||
-            source.tags.some(tag => tag.toLowerCase().includes(lowerQuery))) {
-          results.push({
-            id: source.id,
-            title: source.name,
-            description: `${source.source} - ${source.recordCount.toLocaleString()} records, Last sync: ${source.lastSync.toLocaleDateString()}`,
-            type: 'data_source' as SearchResultType,
-            category: 'Data Sources',
-            url: '/data',
-            score: 0.9,
-            timestamp: source.lastSync,
-            metadata: { 
-              status: source.status, 
-              recordCount: source.recordCount,
-              type: source.type,
-              source: source.source
-            },
-            tags: source.tags
-          });
-        }
-      });
-
-      // Search uploads
-      recentUploads.forEach(upload => {
-        if (upload.filename.toLowerCase().includes(lowerQuery) ||
-            upload.status.toLowerCase().includes(lowerQuery)) {
-          results.push({
-            id: upload.id,
-            title: upload.filename,
-            description: `${upload.status.toUpperCase()} - ${upload.recordCount.toLocaleString()} records, ${upload.fileSize}`,
-            type: 'data_source' as SearchResultType,
-            category: 'Uploads',
-            url: '/data',
-            score: 0.8,
-            timestamp: upload.uploadDate,
-            metadata: { 
-              status: upload.status,
-              recordCount: upload.recordCount,
-              errorCount: upload.errorCount,
-              fileSize: upload.fileSize
-            },
-            tags: ['upload', upload.status]
-          });
-        }
-      });
-
-      // Apply filters
-      let filteredResults = results;
-      if (filters.types && filters.types.length > 0) {
-        filteredResults = filteredResults.filter(result => 
-          filters.types.includes(result.type)
-        );
-      }
-
-      if (filters.category) {
-        filteredResults = filteredResults.filter(result => 
-          result.category === filters.category
-        );
-      }
-
-      if (filters.status) {
-        filteredResults = filteredResults.filter(result => 
-          result.metadata?.status === filters.status
-        );
-      }
-
-      filteredResults.sort((a, b) => b.score - a.score);
-      setSearchResults(filteredResults);
-    } catch (error) {
-      console.error('Search error:', error);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [dataSources, recentUploads]);
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
     setUploading(true);
-    setError('');
+    setError(null);
     setUploadResult(null);
 
     try {
-      const response = await dataAPI.uploadCSV(file, 'default-store', 'custom');
-      setUploadResult(response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Upload failed');
+      const formData = new FormData();
+      formData.append('salesData', file);
+      formData.append('storeId', selectedStore._id);
+      formData.append('platform', selectedStore.type);
+
+      const response = await fetch('/api/data/upload-csv', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        setUploadResult(result);
+        setFile(null);
+      } else {
+        setError(result.error || 'Upload failed');
+      }
+    } catch (err) {
+      setError('Error uploading file');
     } finally {
       setUploading(false);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'success';
-      case 'completed': return 'success';
-      case 'processing': return 'warning';
-      case 'syncing': return 'info';
-      case 'error': return 'error';
-      case 'failed': return 'error';
-      case 'inactive': return 'default';
-      default: return 'default';
-    }
+  const handleCloseUploadDialog = () => {
+    setUploadDialogOpen(false);
+    setFile(null);
+    setUploadResult(null);
+    setError(null);
   };
 
   return (
     <Box>
-      <Box mb={4}>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h1">
           Data Ingestion
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Manage your data sources, upload files, and monitor data synchronization.
-        </Typography>
-        
-        {/* Data Search */}
-        <PageSearch
-          placeholder="Search data sources, uploads, and connections..."
-          onSearch={handleSearch}
-          results={searchResults}
-          isLoading={isSearching}
-          availableFilters={{
-            types: ['data_source'],
-            categories: ['Data Sources', 'Uploads'],
-            customFilters: [
-              {
-                key: 'status',
-                label: 'Status',
-                options: [
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                  { value: 'error', label: 'Error' },
-                  { value: 'completed', label: 'Completed' },
-                  { value: 'processing', label: 'Processing' },
-                  { value: 'failed', label: 'Failed' }
-                ]
-              }
-            ]
-          }}
-          compact
-        />
       </Box>
 
-      {/* Upload Section */}
-      <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Upload CSV Data
-              </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                Upload your sales data in CSV format. Required columns: date, quantity, revenue, productName
-              </Typography>
-              
-              <input
-                accept=".csv,.xlsx"
-                style={{ display: 'none' }}
-                id="csv-upload"
-                type="file"
-                onChange={handleFileUpload}
-                disabled={uploading}
-              />
-              <label htmlFor="csv-upload">
-                <Button
-                  variant="contained"
-                  component="span"
-                  startIcon={<CloudUpload />}
-                  disabled={uploading}
-                  fullWidth
-                >
-                  {uploading ? 'Uploading...' : 'Upload CSV/Excel File'}
-                </Button>
-              </label>
-              
-              {uploading && <LinearProgress sx={{ mt: 2 }} />}
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={activeTab} onChange={handleTabChange}>
+          <Tab
+            icon={<StoreIcon />}
+            label="Store Management"
+            iconPosition="start"
+          />
+          <Tab
+            icon={<UploadIcon />}
+            label="CSV Upload"
+            iconPosition="start"
+          />
+          <Tab
+            icon={<SyncIcon />}
+            label="Data Sources"
+            iconPosition="start"
+          />
+        </Tabs>
+      </Box>
 
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Automatic Sync
-              </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                Connect your e-commerce platforms for automatic data synchronization
-              </Typography>
-              <Button variant="outlined" fullWidth startIcon={<SyncIcon />}>
-                Configure Auto-Sync
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      <TabPanel value={activeTab} index={0}>
+        <StoreManager 
+          onStoreSelect={handleStoreSelect}
+          selectedStoreId={selectedStore?._id}
+        />
+      </TabPanel>
 
-      {/* Data Sources */}
-      <Grid container spacing={3} mb={4}>
-        <Grid item xs={12}>
-          <Paper>
-            <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Data Sources
+      <TabPanel value={activeTab} index={1}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Quick CSV Upload
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Upload sales data for your brick and mortar stores using CSV files
+                </Typography>
+
+                {selectedStore ? (
+                  <Alert severity="info" sx={{ mb: 2 }}>
+                    Selected store: <strong>{selectedStore.name}</strong>
+                  </Alert>
+                ) : (
+                  <Alert severity="warning" sx={{ mb: 2 }}>
+                    Please select a store from the Store Management tab first
+                  </Alert>
+                )}
+
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                  <Button
+                    variant="contained"
+                    startIcon={<CloudUpload />}
+                    onClick={() => setUploadDialogOpen(true)}
+                    disabled={!selectedStore}
+                  >
+                    Upload CSV
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    startIcon={<TemplateIcon />}
+                    onClick={handleDownloadTemplate}
+                  >
+                    Download Template
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  CSV Format Requirements
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Your CSV file must include these required columns:
+                </Typography>
+                <List dense>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckIcon color="success" fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="date" 
+                      secondary="Transaction date (YYYY-MM-DD)" 
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckIcon color="success" fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="productName" 
+                      secondary="Name of the product sold" 
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckIcon color="success" fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="quantity" 
+                      secondary="Number of items sold" 
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckIcon color="success" fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="revenue" 
+                      secondary="Total sales amount" 
+                    />
+                  </ListItem>
+                </List>
+                <Typography variant="body2" color="text.secondary">
+                  Optional columns: cost, category, sku, productId
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </TabPanel>
+
+      <TabPanel value={activeTab} index={2}>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Connected Data Sources
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Manage your e-commerce platform integrations and automated data sources
+            </Typography>
+            <Alert severity="info">
+              Integration with Shopify, Amazon, and WooCommerce coming soon. 
+              Currently supporting manual CSV uploads for brick and mortar stores.
+            </Alert>
+          </CardContent>
+        </Card>
+      </TabPanel>
+
+      {/* Upload Dialog */}
+      <Dialog open={uploadDialogOpen} onClose={handleCloseUploadDialog} maxWidth="md" fullWidth>
+        <DialogTitle>Upload Sales Data</DialogTitle>
+        <DialogContent>
+          {!selectedStore ? (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              Please select a store from the Store Management tab before uploading data.
+            </Alert>
+          ) : (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Uploading data for: <strong>{selectedStore.name}</strong>
+            </Alert>
+          )}
+
+          <Box
+            sx={{
+              border: 2,
+              borderColor: dragOver ? 'primary.main' : 'divider',
+              borderStyle: 'dashed',
+              borderRadius: 2,
+              p: 4,
+              textAlign: 'center',
+              backgroundColor: dragOver ? 'action.hover' : 'background.paper',
+              cursor: 'pointer',
+              mb: 2
+            }}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onClick={() => document.getElementById('csv-file-input')?.click()}
+          >
+            <CloudUpload sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              {file ? file.name : 'Drop CSV file here or click to browse'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Supported formats: .csv files up to 10MB
+            </Typography>
+            <input
+              id="csv-file-input"
+              type="file"
+              accept=".csv"
+              style={{ display: 'none' }}
+              onChange={handleFileSelect}
+            />
+          </Box>
+
+          {uploading && (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="body2" gutterBottom>
+                Processing your file...
               </Typography>
+              <LinearProgress />
             </Box>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Source</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Records</TableCell>
-                    <TableCell>Last Sync</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dataSources.map((source) => (
-                    <TableRow key={source.id}>
-                      <TableCell>
-                        <Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                            {source.name}
-                          </Typography>
-                          <Box sx={{ mt: 0.5 }}>
-                            {source.tags.map(tag => (
-                              <Chip 
-                                key={tag} 
-                                label={tag} 
-                                size="small" 
-                                variant="outlined" 
-                                sx={{ mr: 0.5, height: 20, fontSize: '0.7rem' }}
-                              />
-                            ))}
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      <TableCell>{source.source}</TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={source.type.toUpperCase()} 
-                          size="small" 
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={source.status} 
-                          size="small" 
-                          color={getStatusColor(source.status) as any}
-                        />
-                      </TableCell>
-                      <TableCell>{source.recordCount.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {source.lastSync.toLocaleDateString()}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {source.lastSync.toLocaleTimeString()}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 0.5 }}>
-                          <Tooltip title="View Details">
-                            <IconButton size="small">
-                              <ViewIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Sync Now">
-                            <IconButton size="small">
-                              <SyncIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Download">
-                            <IconButton size="small">
-                              <DownloadIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
-      </Grid>
+          )}
 
-      {/* Recent Uploads */}
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper>
-            <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Recent Uploads
-              </Typography>
-            </Box>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Filename</TableCell>
-                    <TableCell>Upload Date</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Records</TableCell>
-                    <TableCell>File Size</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {recentUploads.map((upload) => (
-                    <TableRow key={upload.id}>
-                      <TableCell>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          {upload.filename}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {upload.uploadDate.toLocaleDateString()}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {upload.uploadDate.toLocaleTimeString()}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={upload.status} 
-                          size="small" 
-                          color={getStatusColor(upload.status) as any}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {upload.recordCount.toLocaleString()}
-                        </Typography>
-                        {upload.errorCount > 0 && (
-                          <Typography variant="caption" color="error">
-                            {upload.errorCount} errors
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>{upload.fileSize}</TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 0.5 }}>
-                          <Tooltip title="View Details">
-                            <IconButton size="small">
-                              <ViewIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Download">
-                            <IconButton size="small">
-                              <DownloadIcon />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete">
-                            <IconButton size="small" color="error">
-                              <DeleteIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Grid>
-      </Grid>
+          {uploadResult && (
+            <Card sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Upload Results
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h4" color="primary">
+                        {uploadResult.summary.totalRows}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Total Rows
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h4" color="success.main">
+                        {uploadResult.summary.importedRows}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Imported
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h4" color="warning.main">
+                        {uploadResult.summary.validRows - uploadResult.summary.importedRows}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Skipped
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="h4" color="error.main">
+                        {uploadResult.summary.errorRows}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Errors
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
 
-      {/* Status Messages */}
-      {error && (
-        <Alert severity="error" sx={{ mt: 3 }}>
-          {error}
-        </Alert>
-      )}
+                {uploadResult.errorDetails && uploadResult.errorDetails.length > 0 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Sample Errors:
+                    </Typography>
+                    <List dense>
+                      {uploadResult.errorDetails.slice(0, 5).map((error, index) => (
+                        <ListItem key={index}>
+                          <ListItemIcon>
+                            <ErrorIcon color="error" fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={`Row ${error.row}`}
+                            secondary={error.error}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                    {uploadResult.errorDetails.length > 5 && (
+                      <Typography variant="body2" color="text.secondary">
+                        ... and {uploadResult.errorDetails.length - 5} more errors
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
-      {uploadResult && (
-        <Alert severity="success" sx={{ mt: 3 }}>
-          Successfully imported {uploadResult.imported} records
-          {uploadResult.errors > 0 && ` (${uploadResult.errors} errors)`}
-        </Alert>
-      )}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUploadDialog}>Cancel</Button>
+          <Button onClick={handleDownloadTemplate} startIcon={<TemplateIcon />}>
+            Download Template
+          </Button>
+          <Button
+            onClick={handleUpload}
+            variant="contained"
+            disabled={!file || !selectedStore || uploading}
+            startIcon={uploading ? <CircularProgress size={20} /> : <UploadIcon />}
+          >
+            {uploading ? 'Uploading...' : 'Upload'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

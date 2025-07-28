@@ -140,7 +140,7 @@
         <div class="container">
             <h2>Ready to Transform Your Forecasting?</h2>
             <p>Join enterprise retailers achieving 94%+ accuracy with OrderNimbus</p>
-            <a href="/contact" class="btn btn-primary">Get Started</a>
+            <a href="https://app.ordernimbus.com" class="btn btn-primary" target="_blank" rel="noopener">Get Started</a>
         </div>
     </section>
 </main>

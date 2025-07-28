@@ -7,8 +7,8 @@
             <h1>Enterprise AI-Powered Sales Forecasting</h1>
             <p>Transform your retail operations with 94%+ forecast accuracy through enterprise-grade AI that combines security, scalability, and compliance.</p>
             <div class="hero-buttons">
-                <a href="/contact" class="btn btn-primary">Start Free Trial</a>
-                <a href="/demo" class="btn btn-secondary">Watch Demo</a>
+                <a href="https://app.ordernimbus.com" class="btn btn-primary" target="_blank" rel="noopener">Get Started</a>
+                <a href="/contact" class="btn btn-secondary">Contact Sales</a>
             </div>
         </div>
     </section>
@@ -127,7 +127,7 @@
                         <li>✓ Basic reporting</li>
                         <li>✓ SOC 2 compliance</li>
                     </ul>
-                    <a href="/contact" class="btn btn-secondary mt-4">Get Started</a>
+                    <a href="https://app.ordernimbus.com" class="btn btn-secondary mt-4" target="_blank" rel="noopener">Get Started</a>
                 </div>
                 <div class="pricing-card featured">
                     <div class="pricing-badge">Most Popular</div>
@@ -140,7 +140,7 @@
                         <li>✓ Advanced analytics</li>
                         <li>✓ SSO integration</li>
                     </ul>
-                    <a href="/contact" class="btn btn-primary mt-4">Get Started</a>
+                    <a href="https://app.ordernimbus.com" class="btn btn-primary mt-4" target="_blank" rel="noopener">Get Started</a>
                 </div>
                 <div class="pricing-card">
                     <h3>Enterprise Plus</h3>

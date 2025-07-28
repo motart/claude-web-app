@@ -1,0 +1,6 @@
+date,productName,quantity,revenue,cost,category,sku,productId
+2024-01-01,Sample Product A,5,100.00,60.00,Electronics,SKU-001,PROD-001
+2024-01-02,Sample Product B,3,75.50,45.00,Clothing,SKU-002,PROD-002
+2024-01-03,Sample Product C,10,200.00,120.00,Home & Garden,SKU-003,PROD-003
+2024-01-04,Sample Product A,2,40.00,24.00,Electronics,SKU-001,PROD-001
+2024-01-05,Sample Product D,1,25.00,15.00,Books,SKU-004,PROD-004

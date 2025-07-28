@@ -31,7 +31,7 @@
                         <li>✓ SOC 2 compliance</li>
                         <li>✓ 3-week implementation</li>
                     </ul>
-                    <a href="/contact" class="btn btn-secondary">Get Started</a>
+                    <a href="https://app.ordernimbus.com" class="btn btn-secondary" target="_blank" rel="noopener">Get Started</a>
                 </div>
                 
                 <div class="pricing-card featured">
@@ -50,7 +50,7 @@
                         <li>✓ Dedicated customer success manager</li>
                         <li>✓ Custom training programs</li>
                     </ul>
-                    <a href="/contact" class="btn btn-primary">Get Started</a>
+                    <a href="https://app.ordernimbus.com" class="btn btn-primary" target="_blank" rel="noopener">Get Started</a>
                 </div>
                 
                 <div class="pricing-card">
@@ -208,7 +208,10 @@
         <div class="container">
             <h2>Ready to Get Started?</h2>
             <p>Join enterprise retailers achieving 94%+ forecast accuracy with transparent pricing</p>
-            <a href="/contact" class="btn btn-primary">Contact Sales</a>
+            <div class="hero-buttons">
+                <a href="https://app.ordernimbus.com" class="btn btn-primary" target="_blank" rel="noopener">Get Started</a>
+                <a href="/contact" class="btn btn-secondary">Contact Sales</a>
+            </div>
         </div>
     </section>
 </main>

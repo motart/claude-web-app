@@ -19,6 +19,11 @@ add_action('after_setup_theme', 'ordernimbus_theme_setup');
 function ordernimbus_scripts() {
     wp_enqueue_style('ordernimbus-style', get_stylesheet_uri(), array(), '1.0.0');
     wp_enqueue_script('ordernimbus-script', get_template_directory_uri() . '/js/main.js', array('jquery'), '1.0.0', true);
+    
+    // Enqueue How It Works specific styles
+    if (is_page('how-it-works')) {
+        wp_enqueue_style('how-it-works-style', get_template_directory_uri() . '/css/how-it-works.css', array('ordernimbus-style'), '1.0.0');
+    }
 }
 add_action('wp_enqueue_scripts', 'ordernimbus_scripts');
 

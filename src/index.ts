@@ -8,6 +8,8 @@ import { authRoutes } from './routes/auth';
 import { dataIngestionRoutes } from './routes/dataIngestion';
 import { forecastRoutes } from './routes/forecast';
 import { connectorRoutes } from './routes/connectors';
+import { gdprRoutes } from './routes/gdpr';
+import { storeRoutes } from './routes/stores';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 
@@ -29,12 +31,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/data', dataIngestionRoutes);
 app.use('/api/forecast', forecastRoutes);
 app.use('/api/connectors', connectorRoutes);
+app.use('/api/gdpr', gdprRoutes);
+app.use('/api/stores', storeRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Serve static files from React build
+// In development, serve error message for non-API routes
+// In production, this would serve the built React app
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/build')));
   
@@ -52,7 +57,11 @@ if (process.env.NODE_ENV === 'production') {
         'GET /health',
         'POST /api/auth/login',
         'POST /api/auth/register',
-        'GET /api/auth/me'
+        'GET /api/auth/me',
+        'POST /api/connectors/shopify/oauth/init',
+        'GET /api/connectors/shopify/oauth/callback',
+        'POST /api/connectors/shopify/connect',
+        'GET /api/connectors/stores'
       ]
     });
   });

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>How It Works - OrderNimbus Test</title>
+    <link rel="stylesheet" href="wp-content/themes/ordernimbus/css/how-it-works.css">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    </style>
+</head>
+<body>
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="how-it-works-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>How OrderNimbus Works</h1>
+                    <p class="hero-subtitle">From setup to predictions in 3 simple steps. Our AI-powered platform transforms your business data into actionable inventory insights.</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">94%</span>
+                            <span class="stat-label">Forecast Accuracy</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">3 Days</span>
+                            <span class="stat-label">Average Setup</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Integrations</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Steps Preview -->
+        <section class="process-steps">
+            <div class="container">
+                <div class="steps-container">
+                    <div class="step-card animate-in" data-step="1">
+                        <div class="step-number">
+                            <span>1</span>
+                        </div>
+                        <div class="step-content">
+                            <h3>Sign Up & Get Started</h3>
+                            <p>Create your OrderNimbus account in minutes. Choose from our flexible pricing plans designed for businesses of all sizes.</p>
+                            <div class="step-cta">
+                                <a href="https://app.ordernimbus.com/register" class="btn btn-primary" target="_blank">Start Free Trial</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="final-cta">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Ready to Transform Your Inventory Management?</h2>
+                    <p>Join thousands of retailers using AI to optimize their inventory and boost profits</p>
+                    <div class="cta-buttons">
+                        <a href="https://app.ordernimbus.com/register" class="btn btn-primary btn-large" target="_blank">Start Free Trial</a>
+                        <a href="/contact" class="btn btn-secondary btn-large">Talk to Sales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Test animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.step-card');
+            cards.forEach(card => {
+                card.classList.add('animate-in');
+            });
+        });
+    </script>
+</body>
+</html>
