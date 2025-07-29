@@ -242,4 +242,62 @@ function ordernimbus_customize_register($wp_customize) {
     ));
 }
 add_action('customize_register', 'ordernimbus_customize_register');
+
+// Handle contact form submission
+function ordernimbus_handle_contact_form() {
+    if (isset($_POST['contact_nonce']) && wp_verify_nonce($_POST['contact_nonce'], 'contact_form_nonce')) {
+        if (isset($_POST['contact_name']) && isset($_POST['contact_email'])) {
+            // Sanitize form data
+            $name = sanitize_text_field($_POST['contact_name']);
+            $email = sanitize_email($_POST['contact_email']);
+            $company = sanitize_text_field($_POST['contact_company']);
+            $phone = sanitize_text_field($_POST['contact_phone']);
+            $company_size = sanitize_text_field($_POST['contact_company_size']);
+            $message = sanitize_textarea_field($_POST['contact_message']);
+            $newsletter = isset($_POST['contact_newsletter']) ? 1 : 0;
+            
+            // Validate required fields
+            if (empty($name) || empty($email) || empty($company) || empty($company_size) || empty($message)) {
+                return false;
+            }
+            
+            // Send email
+            $to = get_option('admin_email');
+            $subject = 'New OrderNimbus Demo Request from ' . $company;
+            $body = "New demo request received:\n\n";
+            $body .= "Name: $name\n";
+            $body .= "Email: $email\n";
+            $body .= "Company: $company\n";
+            $body .= "Phone: $phone\n";
+            $body .= "Company Size: $company_size\n";
+            $body .= "Newsletter: " . ($newsletter ? 'Yes' : 'No') . "\n\n";
+            $body .= "Message:\n$message\n\n";
+            $body .= "Submitted from: " . get_site_url();
+            
+            $headers = array(
+                'Content-Type: text/plain; charset=UTF-8',
+                'Reply-To: ' . $email
+            );
+            
+            $mail_sent = wp_mail($to, $subject, $body, $headers);
+            
+            if ($mail_sent) {
+                // Redirect to prevent form resubmission
+                wp_redirect(add_query_arg('contact_sent', '1', get_permalink()));
+                exit;
+            }
+        }
+    }
+}
+add_action('template_redirect', 'ordernimbus_handle_contact_form');
+
+// Display contact form success message
+function ordernimbus_contact_form_message() {
+    if (isset($_GET['contact_sent']) && $_GET['contact_sent'] == '1') {
+        echo '<div class="form-success" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px; border-radius: 6px; margin: 20px 0;">
+            <strong>Thank you!</strong> Your demo request has been submitted. We\'ll contact you within 24 hours to schedule your personalized demo.
+        </div>';
+    }
+}
+
 ?>

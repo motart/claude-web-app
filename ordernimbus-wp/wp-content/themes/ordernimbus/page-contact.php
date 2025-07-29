@@ -17,7 +17,70 @@
                     <h2>Get Started Today</h2>
                     <p>Schedule a personalized demo and see how OrderNimbus can transform your forecasting accuracy.</p>
                     
-                    <?php echo do_shortcode('[contact_form]'); ?>
+                    <?php 
+                    if (isset($_GET['contact_sent']) && $_GET['contact_sent'] == '1') {
+                        echo '<div class="form-success">
+                            <strong>Thank you!</strong> Your demo request has been submitted. We\'ll contact you within 24 hours to schedule your personalized demo.
+                        </div>';
+                    }
+                    ?>
+                    
+                    <form id="contact-form" class="contact-form" method="post" action="">
+                        <?php wp_nonce_field('contact_form_nonce', 'contact_nonce'); ?>
+                        
+                        <div class="form-group">
+                            <label for="contact_name">Full Name *</label>
+                            <input type="text" id="contact_name" name="contact_name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_email">Work Email *</label>
+                            <input type="email" id="contact_email" name="contact_email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_company">Company Name *</label>
+                            <input type="text" id="contact_company" name="contact_company" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_phone">Phone Number</label>
+                            <input type="tel" id="contact_phone" name="contact_phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_company_size">Company Size *</label>
+                            <select id="contact_company_size" name="contact_company_size" required>
+                                <option value="">Select company size</option>
+                                <option value="1-10">1-10 employees</option>
+                                <option value="11-50">11-50 employees</option>
+                                <option value="51-200">51-200 employees</option>
+                                <option value="201-500">201-500 employees</option>
+                                <option value="500+">500+ employees</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact_message">Tell us about your forecasting challenges *</label>
+                            <textarea id="contact_message" name="contact_message" rows="4" required placeholder="Describe your current forecasting process, challenges, and goals..."></textarea>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="contact_newsletter" value="1">
+                                <span class="checkmark"></span>
+                                Subscribe to OrderNimbus updates and industry insights
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-full">
+                            Schedule Demo
+                        </button>
+                        
+                        <p class="form-privacy">
+                            By submitting this form, you agree to our <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms of Service</a>.
+                        </p>
+                    </form>
                 </div>
                 <div class="col-half">
                     <h2>Why Choose OrderNimbus?</h2>

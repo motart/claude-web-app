@@ -1,0 +1,250 @@
+{
+  "knowledgeBase": [
+    {
+      "id": "kb_getting_started",
+      "title": "Getting Started with OrderNimbus",
+      "category": "onboarding",
+      "tags": ["getting started", "onboarding", "setup", "new user"],
+      "content": "Welcome to OrderNimbus! Here's how to get started:\n\n1. **Complete Your Profile**: Add your business details and preferences\n2. **Connect Your First Store**: Link your Shopify, Amazon, or other sales channel\n3. **Import Historical Data**: Upload past sales data for better forecasting\n4. **Set Up Forecasting**: Configure your forecasting parameters\n5. **Explore Dashboard**: Familiarize yourself with key metrics and reports\n\nNeed help with any step? I'm here to guide you through the process!",
+      "searchTerms": "getting started onboarding setup new user first time",
+      "confidence": 0.95,
+      "usage": 250,
+      "rating": 4.9,
+      "lastUpdated": "2024-01-15T00:00:00Z"
+    },
+    {
+      "id": "kb_shopify_connection",
+      "title": "How to Connect Your Shopify Store",
+      "category": "integrations",
+      "tags": ["shopify", "connection", "setup", "integration"],
+      "content": "To connect your Shopify store to OrderNimbus:\n\n**Step 1: Access Connectors**\n• Go to the 'Connectors' page in your dashboard\n• Click 'Connect New Store'\n• Select 'Shopify'\n\n**Step 2: Enter Store Details**\n• Enter your Shopify store URL (e.g., 'mystore.myshopify.com')\n• Click 'Connect'\n\n**Step 3: Authorize Connection**\n• You'll be redirected to Shopify\n• Log in to your Shopify admin\n• Click 'Install App' to authorize OrderNimbus\n\n**Step 4: Configure Sync**\n• Choose which data to sync (orders, products, customers)\n• Set sync frequency (real-time recommended)\n• Click 'Save Settings'\n\n**Troubleshooting:**\n• Ensure you have admin access to your Shopify store\n• Check that your store URL is correct\n• If connection fails, try clearing browser cache\n\nYour data will start syncing within 5-10 minutes!",
+      "searchTerms": "shopify connect integration setup store authorization sync",
+      "confidence": 0.98,
+      "usage": 180,
+      "rating": 4.8,
+      "lastUpdated": "2024-01-10T00:00:00Z"
+    },
+    {
+      "id": "kb_amazon_connection",
+      "title": "Connecting Amazon Seller Central",
+      "category": "integrations",
+      "tags": ["amazon", "seller central", "connection", "integration"],
+      "content": "To connect your Amazon Seller Central account:\n\n**Prerequisites:**\n• Active Amazon Seller Central account\n• Admin or Developer access\n• Amazon MWS API access (we'll help you get this)\n\n**Connection Steps:**\n1. Go to Connectors → Add New → Amazon\n2. Enter your Seller ID (found in Seller Central settings)\n3. We'll generate an MWS application for you\n4. Authorize the application in Seller Central\n5. Configure sync settings\n\n**Available Data:**\n• Orders and order details\n• Product catalog and inventory\n• FBA shipments and fees\n• Customer metrics (where allowed)\n\n**Sync Frequency:**\n• Orders: Every 15 minutes\n• Inventory: Every hour\n• Products: Daily\n\n**Important Notes:**\n• Amazon has API rate limits - we handle these automatically\n• Historical data can go back up to 2 years\n• FBA and FBM orders are tracked separately\n\nNeed help with MWS setup? I can walk you through it step by step!",
+      "searchTerms": "amazon seller central MWS API connection integration FBA",
+      "confidence": 0.92,
+      "usage": 120,
+      "rating": 4.6,
+      "lastUpdated": "2024-01-08T00:00:00Z"
+    },
+    {
+      "id": "kb_pricing_plans",
+      "title": "OrderNimbus Pricing Plans and Features",
+      "category": "billing",
+      "tags": ["pricing", "plans", "billing", "features", "cost"],
+      "content": "Here's a complete breakdown of our pricing plans:\n\n**🚀 Starter Plan - $29/month**\n• Up to 1,000 orders per month\n• 1 store connection\n• Basic AI forecasting\n• Standard email support\n• Basic reporting\n• 2 team members\n\n**💼 Professional Plan - $79/month (Most Popular)**\n• Up to 10,000 orders per month\n• 5 store connections\n• Advanced AI forecasting with ML\n• Priority email & chat support\n• Advanced analytics and reporting\n• Custom integrations\n• API access\n• 5 team members\n\n**🏢 Enterprise Plan - $199/month**\n• Unlimited orders\n• Unlimited store connections\n• Enterprise AI with custom models\n• 24/7 phone support + dedicated success manager\n• White-label options\n• Custom reporting and dashboards\n• SLA guarantees\n• SSO integration\n• Unlimited team members\n\n**💰 Annual Discount:** Save 20% on any plan with annual billing\n\n**🆓 Free Trial:** 14-day free trial on any plan (no credit card required)\n\n**Plan Comparisons:**\n• All plans include data security (SOC 2 compliant)\n• All plans include basic integrations\n• Upgrade/downgrade anytime\n• Pro-rated billing for plan changes\n\nWhich plan sounds right for your business needs?",
+      "searchTerms": "pricing cost plans billing features comparison starter professional enterprise",
+      "confidence": 0.99,
+      "usage": 300,
+      "rating": 4.9,
+      "lastUpdated": "2024-01-12T00:00:00Z"
+    },
+    {
+      "id": "kb_forecasting_basics",
+      "title": "Understanding AI Forecasting in OrderNimbus",
+      "category": "features",
+      "tags": ["forecasting", "AI", "machine learning", "predictions", "inventory"],
+      "content": "OrderNimbus uses advanced machine learning to predict future sales and inventory needs:\n\n**How It Works:**\n• Analyzes your historical sales data\n• Identifies seasonal patterns and trends\n• Considers external factors (holidays, promotions)\n• Uses ensemble ML models (LSTM, ARIMA, Prophet)\n• Continuously learns and improves accuracy\n\n**What You Get:**\n• Daily, weekly, and monthly forecasts\n• Product-level demand predictions\n• Seasonality insights\n• Trend analysis\n• Confidence intervals for predictions\n\n**Accuracy Expectations:**\n• New accounts: 75-85% accuracy initially\n• After 3 months: 85-92% accuracy\n• Mature accounts: 92-96% accuracy\n\n**Improving Accuracy:**\n• Connect more sales channels\n• Provide 12+ months historical data\n• Include promotional calendars\n• Regular inventory updates\n• Mark unusual events (stockouts, promotions)\n\n**Understanding Forecasts:**\n• Green: High confidence predictions\n• Yellow: Moderate confidence\n• Red: Low confidence (needs more data)\n\n**Business Benefits:**\n• Reduce excess inventory by 20-40%\n• Decrease stockouts by 30-50%\n• Improve cash flow\n• Better vendor negotiations\n• Optimized marketing spend\n\nWant me to show you how to interpret your specific forecasts?",
+      "searchTerms": "forecasting AI machine learning predictions accuracy inventory demand",
+      "confidence": 0.94,
+      "usage": 160,
+      "rating": 4.7,
+      "lastUpdated": "2024-01-14T00:00:00Z"
+    },
+    {
+      "id": "kb_data_import",
+      "title": "Importing Historical Sales Data",
+      "category": "data_management",
+      "tags": ["data import", "CSV", "Excel", "historical data", "upload"],
+      "content": "You can import historical sales data to improve forecasting accuracy:\n\n**Supported Formats:**\n• CSV files (.csv)\n• Excel files (.xlsx, .xls)\n• JSON files (.json)\n• Direct API uploads\n\n**Required Fields:**\n• Date (YYYY-MM-DD format)\n• Product SKU or ID\n• Quantity sold\n• Price per unit\n• Total revenue\n\n**Optional Fields (Recommended):**\n• Customer ID\n• Location/Store\n• Promotion codes\n• Order source\n• Product category\n\n**File Size Limits:**\n• Starter: Up to 10MB per file\n• Professional: Up to 100MB per file\n• Enterprise: Up to 1GB per file\n\n**Upload Process:**\n1. Go to Data → Import Data\n2. Choose file type and upload\n3. Map your columns to our fields\n4. Preview and validate data\n5. Start import process\n\n**Data Validation:**\n• We check for duplicates\n• Validate date formats\n• Flag unusual values\n• Suggest corrections\n\n**Processing Time:**\n• Small files (<1MB): Instant\n• Medium files (1-50MB): 2-10 minutes\n• Large files (50MB+): 15-60 minutes\n\n**Best Practices:**\n• Include at least 12 months of data\n• Clean data before upload (remove test orders)\n• Use consistent SKU naming\n• Include seasonal cycles\n• Mark promotional periods\n\n**Troubleshooting:**\n• 'Invalid date format' → Use YYYY-MM-DD\n• 'Duplicate SKU' → Check for product variations\n• 'Missing required field' → Ensure all required columns exist\n\nNeed help formatting your data? I can provide a template!",
+      "searchTerms": "data import CSV Excel upload historical sales format template",
+      "confidence": 0.91,
+      "usage": 140,
+      "rating": 4.5,
+      "lastUpdated": "2024-01-09T00:00:00Z"
+    },
+    {
+      "id": "kb_dashboard_overview",
+      "title": "Navigating Your OrderNimbus Dashboard",
+      "category": "features",
+      "tags": ["dashboard", "navigation", "overview", "metrics", "KPIs"],
+      "content": "Your OrderNimbus dashboard provides a comprehensive view of your business:\n\n**Main Sections:**\n\n**📊 Overview Tab:**\n• Key performance indicators (KPIs)\n• Revenue trends and growth\n• Top-performing products\n• Recent order activity\n• Forecast accuracy metrics\n\n**📈 Forecasting Tab:**\n• Demand predictions by product\n• Seasonal trend analysis\n• Inventory recommendations\n• Confidence intervals\n• Forecast vs actual comparisons\n\n**🔗 Connectors Tab:**\n• Connected store status\n• Sync health and frequency\n• Data source management\n• Integration settings\n• Connection troubleshooting\n\n**📋 Reports Tab:**\n• Pre-built report templates\n• Custom report builder\n• Scheduled report delivery\n• Export options (PDF, Excel, CSV)\n• Historical report archive\n\n**Key Metrics Explained:**\n• **Forecast Accuracy**: How close predictions are to actual sales\n• **Inventory Turnover**: How quickly you sell through stock\n• **Stockout Risk**: Products likely to run out soon\n• **Overstock Risk**: Products with excess inventory\n• **Revenue Growth**: Period-over-period sales changes\n\n**Customization Options:**\n• Drag and drop widgets\n• Choose time periods (daily, weekly, monthly)\n• Filter by product, category, or location\n• Set up custom alerts\n• Create personalized views\n\n**Quick Actions:**\n• Click any metric to drill down\n• Use the search bar to find specific products\n• Export data with one click\n• Share reports with team members\n• Set up automated alerts\n\n**Mobile Access:**\n• Full mobile-responsive design\n• Native mobile apps coming soon\n• Offline access to key metrics\n• Push notifications for alerts\n\nWant a personalized tour of your dashboard? I can walk you through your specific data!",
+      "searchTerms": "dashboard navigation overview metrics KPIs reports widgets mobile",
+      "confidence": 0.88,
+      "usage": 110,
+      "rating": 4.4,
+      "lastUpdated": "2024-01-11T00:00:00Z"
+    },
+    {
+      "id": "kb_inventory_optimization",
+      "title": "Inventory Optimization Features",
+      "category": "features",
+      "tags": ["inventory", "optimization", "reorder points", "safety stock", "ABC analysis"],
+      "content": "OrderNimbus helps optimize your inventory levels for maximum efficiency:\n\n**Core Features:**\n\n**📦 Reorder Point Calculation:**\n• Automatically calculates when to reorder\n• Considers lead times and demand variability\n• Updates based on seasonal patterns\n• Accounts for minimum order quantities\n\n**🛡️ Safety Stock Optimization:**\n• Determines optimal buffer inventory\n• Balances stockout risk vs carrying costs\n• Adjusts for demand uncertainty\n• Considers supplier reliability\n\n**📊 ABC Analysis:**\n• Categorizes products by importance\n• A items: High value, tight control\n• B items: Moderate value, moderate control\n• C items: Low value, simple controls\n\n**🎯 Demand Classification:**\n• Fast-moving items: Daily monitoring\n• Medium-moving: Weekly reviews\n• Slow-moving: Monthly analysis\n• Dead stock: Clearance recommendations\n\n**Smart Recommendations:**\n• Purchase order suggestions\n• Optimal order quantities\n• Supplier performance insights\n• Seasonal buying guidance\n\n**Cost Optimization:**\n• Carrying cost calculations\n• Stockout cost estimates\n• Total cost of ownership\n• ROI on inventory investments\n\n**Alerts and Notifications:**\n• Low stock warnings\n• Overstock alerts\n• Seasonal preparation reminders\n• Supplier delivery delays\n\n**Integration Benefits:**\n• Syncs with your existing systems\n• Updates in real-time\n• Historical performance tracking\n• Automated purchase workflows\n\n**Reporting:**\n• Inventory health scores\n• Turnover rate analysis\n• Carrying cost breakdowns\n• Performance benchmarks\n\n**Best Practices:**\n• Review recommendations weekly\n• Adjust parameters seasonally\n• Monitor supplier performance\n• Track forecast accuracy impact\n\nWant me to analyze your current inventory and provide specific optimization recommendations?",
+      "searchTerms": "inventory optimization reorder points safety stock ABC analysis demand",
+      "confidence": 0.87,
+      "usage": 95,
+      "rating": 4.6,
+      "lastUpdated": "2024-01-13T00:00:00Z"
+    },
+    {
+      "id": "kb_troubleshooting_sync",
+      "title": "Troubleshooting Data Sync Issues",
+      "category": "technical_support",
+      "tags": ["sync issues", "troubleshooting", "data problems", "connection errors"],
+      "content": "Common data sync issues and their solutions:\n\n**🔍 Diagnosing Sync Problems:**\n• Check Connectors page for status indicators\n• Look for error messages or warnings\n• Verify last successful sync timestamp\n• Review sync logs for details\n\n**Common Issues & Solutions:**\n\n**❌ Connection Failed:**\n• Verify store credentials are correct\n• Check if you changed passwords recently\n• Ensure API permissions are still active\n• Test connection by clicking 'Test Connection'\n\n**⏰ Sync Delays:**\n• Normal delays: 5-15 minutes\n• High volume periods may take longer\n• API rate limits can cause delays\n• Check for maintenance windows\n\n**📊 Missing Data:**\n• Verify date ranges in sync settings\n• Check if products/orders meet sync criteria\n• Look for deleted items in source system\n• Review field mapping configurations\n\n**🔄 Duplicate Records:**\n• Usually caused by multiple sync attempts\n• Our system handles most duplicates automatically\n• Contact support if duplicates persist\n• Check for multiple connections to same store\n\n**🚫 Authorization Errors:**\n• Re-authorize the connection\n• Check if app was uninstalled from store\n• Verify admin permissions haven't changed\n• Clear browser cache and try again\n\n**Quick Fixes:**\n1. **Refresh Connection**: Click 'Refresh' on Connectors page\n2. **Manual Sync**: Click 'Sync Now' to force update\n3. **Reconnect**: Remove and re-add the connection\n4. **Clear Cache**: Log out and back in\n\n**When to Contact Support:**\n• Sync has been failing for > 24 hours\n• Critical data is missing\n• Error messages you don't understand\n• Performance issues affecting business\n\n**Prevention Tips:**\n• Don't change store passwords without updating connections\n• Keep OrderNimbus app installed in your store\n• Monitor sync status regularly\n• Set up sync failure alerts\n\n**Status Indicators:**\n• 🟢 Green: Healthy sync\n• 🟡 Yellow: Minor issues, working\n• 🔴 Red: Sync failed, needs attention\n• ⚪ Gray: Connection not configured\n\nNeed immediate help with a sync issue? I can run diagnostics on your specific connection!",
+      "searchTerms": "sync issues troubleshooting connection errors data problems failed",
+      "confidence": 0.85,
+      "usage": 170,
+      "rating": 4.3,
+      "lastUpdated": "2024-01-07T00:00:00Z"
+    },
+    {
+      "id": "kb_user_management",
+      "title": "Managing Team Members and Permissions",
+      "category": "account_management",
+      "tags": ["users", "team", "permissions", "roles", "access control"],
+      "content": "OrderNimbus supports team collaboration with role-based access control:\n\n**User Roles:**\n\n**👨‍💼 Owner/Admin:**\n• Full access to all features\n• Manage billing and subscriptions\n• Add/remove team members\n• Configure integrations\n• Access all data and reports\n\n**📊 Manager:**\n• View all data and reports\n• Create and modify forecasts\n• Manage inventory settings\n• Cannot access billing or user management\n• Can export data and reports\n\n**👀 Viewer:**\n• Read-only access to dashboards\n• View reports and forecasts\n• Cannot modify settings or data\n• Cannot export sensitive data\n• Limited to assigned product categories\n\n**📈 Analyst:**\n• Full access to analytics and reporting\n• Create custom reports\n• Modify forecast parameters\n• Cannot access billing or integrations\n• Can schedule automated reports\n\n**Managing Team Members:**\n\n**Adding Users:**\n1. Go to Settings → Team Members\n2. Click 'Invite Team Member'\n3. Enter email address\n4. Select role and permissions\n5. Choose data access level\n6. Send invitation\n\n**Invitation Process:**\n• User receives email invitation\n• They create OrderNimbus account\n• Automatically added to your team\n• Can access assigned features immediately\n\n**Permission Customization:**\n• Restrict access by product category\n• Limit date ranges for reports\n• Control export capabilities\n• Set view-only vs edit permissions\n• Configure notification preferences\n\n**Team Limits by Plan:**\n• Starter: 2 team members\n• Professional: 5 team members\n• Enterprise: Unlimited members\n\n**Security Features:**\n• Two-factor authentication (2FA)\n• Single sign-on (SSO) for Enterprise\n• Activity logging and audit trails\n• Session timeout settings\n• IP address restrictions (Enterprise)\n\n**Best Practices:**\n• Use least-privilege principle\n• Regularly review user access\n• Remove inactive users promptly\n• Enable 2FA for all users\n• Monitor user activity logs\n\n**Troubleshooting:**\n• User not receiving invitation? Check spam folder\n• Cannot access features? Verify role permissions\n• Forgot password? Use password reset\n• Account locked? Contact admin for unlock\n\nNeed help setting up specific user roles or permissions? I can walk you through the process!",
+      "searchTerms": "users team members permissions roles access control invite management",
+      "confidence": 0.86,
+      "usage": 75,
+      "rating": 4.2,
+      "lastUpdated": "2024-01-06T00:00:00Z"
+    },
+    {
+      "id": "kb_api_documentation",
+      "title": "OrderNimbus API Documentation",
+      "category": "technical",
+      "tags": ["API", "integration", "developer", "endpoints", "authentication"],
+      "content": "OrderNimbus provides a RESTful API for custom integrations:\n\n**Getting Started:**\n\n**Authentication:**\n• API key authentication\n• Bearer token format\n• Keys generated in Settings → API\n• Different keys for different environments\n\n**Base URL:**\n```\nProduction: https://api.ordernimbus.com/v1/\nStaging: https://api-staging.ordernimbus.com/v1/\n```\n\n**Key Endpoints:**\n\n**📊 Forecasting API:**\n```\nGET /forecasts/{product_id}\nPOST /forecasts/bulk\nPUT /forecasts/{id}/feedback\n```\n\n**📦 Inventory API:**\n```\nGET /inventory\nPOST /inventory/adjustments\nGET /inventory/recommendations\n```\n\n**📈 Analytics API:**\n```\nGET /analytics/sales\nGET /analytics/performance\nPOST /analytics/custom-query\n```\n\n**🔗 Connectors API:**\n```\nGET /connectors\nPOST /connectors/{type}/sync\nGET /connectors/{id}/status\n```\n\n**Request Format:**\n```json\n{\n  \"headers\": {\n    \"Authorization\": \"Bearer YOUR_API_KEY\",\n    \"Content-Type\": \"application/json\"\n  }\n}\n```\n\n**Response Format:**\n```json\n{\n  \"status\": \"success\",\n  \"data\": {...},\n  \"timestamp\": \"2024-01-15T10:30:00Z\",\n  \"request_id\": \"req_123456\"\n}\n```\n\n**Rate Limits:**\n• Starter: 100 requests/hour\n• Professional: 1,000 requests/hour\n• Enterprise: 10,000 requests/hour\n• Burst limit: 50 requests/minute\n\n**Error Handling:**\n• Standard HTTP status codes\n• Detailed error messages\n• Request ID for support\n• Rate limit headers included\n\n**Webhooks:**\n• Real-time event notifications\n• Configurable endpoints\n• Retry logic with exponential backoff\n• Signature verification for security\n\n**Available Events:**\n• forecast.updated\n• inventory.low_stock\n• sync.completed\n• sync.failed\n\n**SDK Libraries:**\n• JavaScript/Node.js\n• Python\n• PHP\n• Ruby\n• Go (coming soon)\n\n**Example Code:**\n```javascript\nconst orderNimbus = require('ordernimbus-sdk');\nconst client = new orderNimbus.Client('your-api-key');\n\nconst forecast = await client.forecasts.get('product-123');\nconsole.log(forecast.prediction);\n```\n\n**Testing:**\n• Postman collection available\n• Interactive API explorer\n• Sandbox environment\n• Mock data endpoints\n\n**Support:**\n• API documentation portal\n• Code examples and tutorials\n• Developer community forum\n• Direct developer support\n\nNeed help implementing a specific integration? I can provide code examples and guidance!",
+      "searchTerms": "API documentation developer integration endpoints authentication webhooks SDK",
+      "confidence": 0.92,
+      "usage": 65,
+      "rating": 4.5,
+      "lastUpdated": "2024-01-14T00:00:00Z"
+    }
+  ],
+  "commonIntents": [
+    {
+      "intent": "pricing_inquiry",
+      "keywords": ["price", "cost", "plan", "billing", "payment", "expensive", "cheap", "fee"],
+      "confidence_threshold": 0.7,
+      "escalation_triggers": ["cancel", "expensive", "competitor"]
+    },
+    {
+      "intent": "technical_support",
+      "keywords": ["error", "bug", "broken", "not working", "issue", "problem", "help", "support"],
+      "confidence_threshold": 0.6,
+      "escalation_triggers": ["urgent", "critical", "down", "broken"]
+    },
+    {
+      "intent": "integration_support",
+      "keywords": ["connect", "shopify", "amazon", "sync", "integration", "setup", "configure"],
+      "confidence_threshold": 0.8,
+      "escalation_triggers": ["failed", "error", "not syncing"]
+    },
+    {
+      "intent": "onboarding_help",
+      "keywords": ["getting started", "setup", "onboarding", "new", "first time", "tutorial"],
+      "confidence_threshold": 0.75,
+      "escalation_triggers": ["confused", "stuck", "lost"]
+    },
+    {
+      "intent": "feature_question",
+      "keywords": ["feature", "functionality", "how to", "can i", "does it", "forecasting"],
+      "confidence_threshold": 0.7,
+      "escalation_triggers": ["missing", "need", "request"]
+    },
+    {
+      "intent": "billing_inquiry",
+      "keywords": ["invoice", "charge", "payment", "subscription", "upgrade", "downgrade"],
+      "confidence_threshold": 0.8,
+      "escalation_triggers": ["refund", "dispute", "cancel"]
+    },
+    {
+      "intent": "data_question",
+      "keywords": ["data", "import", "export", "CSV", "upload", "download"],
+      "confidence_threshold": 0.75,
+      "escalation_triggers": ["lost", "missing", "corrupted"]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "onboarding_flow",
+      "name": "New User Onboarding",
+      "category": "onboarding",
+      "description": "Welcome! I'll help you get set up with OrderNimbus step by step.",
+      "steps": [
+        {
+          "id": "welcome",
+          "name": "Welcome & Goal Setting",
+          "content": "Welcome to OrderNimbus! I'm here to help you get the most out of our platform. What's your main goal?\n\nA) 📈 Improve inventory forecasting accuracy\nB) 🔗 Connect multiple sales channels\nC) 📊 Better understand sales trends and patterns\nD) 🎯 All of the above\n\nJust type the letter that best matches your needs!",
+          "type": "choice",
+          "next_steps": {
+            "A": "forecasting_setup",
+            "B": "integration_setup", 
+            "C": "analytics_setup",
+            "D": "comprehensive_setup"
+          }
+        },
+        {
+          "id": "forecasting_setup",
+          "name": "Forecasting Setup",
+          "content": "Perfect! Let's focus on improving your forecasting accuracy. First, I need to understand your current situation:\n\n• How many products do you typically manage?\n• Do you have historical sales data (12+ months)?\n• What's your biggest inventory challenge right now?\n\nThis helps me customize the setup for your specific needs.",
+          "type": "information_gathering",
+          "next_steps": {
+            "default": "data_connection"
+          }
+        }
+      ]
+    },
+    {
+      "id": "support_escalation",
+      "name": "Support Escalation Workflow", 
+      "category": "support",
+      "description": "Let me gather some information to get you the best help possible.",
+      "steps": [
+        {
+          "id": "issue_classification",
+          "name": "Issue Classification",
+          "content": "I want to make sure you get the right help quickly. Can you tell me more about the issue you're experiencing?\n\n• What were you trying to do when this happened?\n• What error message (if any) did you see?\n• How urgent is this for your business?\n\nThe more details you provide, the better I can assist you!",
+          "type": "information_gathering",
+          "next_steps": {
+            "default": "solution_search"
+          }
+        }
+      ]
+    }
+  ],
+  "quickResponses": {
+    "greeting": [
+      "Hi there! 👋 I'm your OrderNimbus assistant. How can I help you today?",
+      "Hello! Welcome to OrderNimbus. What would you like to know about?",
+      "Hey! I'm here to help with any questions about OrderNimbus. What's on your mind?"
+    ],
+    "thanks": [
+      "You're very welcome! Is there anything else I can help you with?",
+      "Happy to help! Feel free to ask if you have any other questions.",
+      "Glad I could assist! Let me know if you need anything else."
+    ],
+    "goodbye": [
+      "Goodbye! Don't hesitate to reach out if you need any help in the future.",
+      "Take care! I'm always here when you need assistance with OrderNimbus.",
+      "Have a great day! Remember, I'm here 24/7 if you have questions."
+    ],
+    "unclear": [
+      "I want to make sure I understand you correctly. Could you rephrase that or provide a bit more detail?",
+      "I'm not quite sure what you're looking for. Could you be more specific about what you need help with?",
+      "Let me make sure I can give you the most helpful answer. Could you tell me more about what you're trying to accomplish?"
+    ]
+  }
+}

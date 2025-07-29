@@ -10,6 +10,7 @@ import { forecastRoutes } from './routes/forecast';
 import { connectorRoutes } from './routes/connectors';
 import { gdprRoutes } from './routes/gdpr';
 import { storeRoutes } from './routes/stores';
+import chatbotRoutes from './routes/chatbot';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 
@@ -33,6 +34,7 @@ app.use('/api/forecast', forecastRoutes);
 app.use('/api/connectors', connectorRoutes);
 app.use('/api/gdpr', gdprRoutes);
 app.use('/api/stores', storeRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
