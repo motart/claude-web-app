@@ -7,6 +7,15 @@ interface User {
   name: string;
   company: string;
   role: string;
+  plan: 'starter' | 'professional' | 'enterprise';
+  onboardingCompleted: boolean;
+  preferences: {
+    language: string;
+    timezone: string;
+    communicationStyle: 'formal' | 'casual' | 'technical';
+    emailNotifications: boolean;
+    marketingEmails: boolean;
+  };
   connectedStores: Array<{
     platform: string;
     storeId: string;

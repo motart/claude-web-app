@@ -47,13 +47,26 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
+interface Entity {
+  type: string;
+  value: string;
+  confidence: number;
+}
+
+interface IntentClassification {
+  intent: string;
+  confidence: number;
+  entities: Entity[];
+  requiresEscalation?: boolean;
+}
+
 interface ConversationMessage {
   id: string;
   content: string;
   sender: 'user' | 'bot';
   timestamp: Date;
   intent?: string;
-  entities?: any[];
+  entities?: Entity[];
   confidence?: number;
   feedback?: 'helpful' | 'not_helpful';
   quickActions?: QuickAction[];
@@ -246,7 +259,7 @@ export const IntelligentChatbot: React.FC = () => {
     
     // Multi-layer intent classification
     const intents = knowledgeBase!.commonIntents;
-    let bestMatch = { intent: 'general_inquiry', confidence: 0.3, entities: [] };
+    let bestMatch: IntentClassification = { intent: 'general_inquiry', confidence: 0.3, entities: [] };
     
     for (const intentDef of intents) {
       let confidence = 0;
@@ -616,9 +629,9 @@ export const IntelligentChatbot: React.FC = () => {
   };
 
   // Helper functions
-  const extractEntities = (message: string, intent: string) => {
+  const extractEntities = (message: string, intent: string): Entity[] => {
     // Simple entity extraction - in production, use NLP libraries
-    const entities = [];
+    const entities: Entity[] = [];
     if (intent === 'integration_support') {
       const platforms = ['shopify', 'amazon', 'bigcommerce', 'woocommerce'];
       const found = platforms.find(p => message.toLowerCase().includes(p));
@@ -629,7 +642,7 @@ export const IntelligentChatbot: React.FC = () => {
     return entities;
   };
 
-  const extractPlatform = (entities: any[]) => {
+  const extractPlatform = (entities: Entity[]) => {
     const platformEntity = entities?.find(e => e.type === 'platform');
     return platformEntity?.value;
   };

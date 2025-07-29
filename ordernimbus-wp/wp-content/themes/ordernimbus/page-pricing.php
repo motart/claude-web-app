@@ -19,7 +19,7 @@
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3>Professional</h3>
-                    <div class="price">$12K<span class="price-period">/year</span></div>
+                    <div class="price">$1,000<span class="price-period">/month</span></div>
                     <p>Perfect for growing retail businesses</p>
                     <ul style="text-align: left; list-style: none; padding: 0; margin: 2rem 0;">
                         <li>✓ Up to 50 locations</li>
@@ -37,7 +37,7 @@
                 <div class="pricing-card featured">
                     <div class="pricing-badge">Most Popular</div>
                     <h3>Enterprise</h3>
-                    <div class="price">$36K<span class="price-period">/year</span></div>
+                    <div class="price">$3,000<span class="price-period">/month</span></div>
                     <p>For established multi-location retailers</p>
                     <ul style="text-align: left; list-style: none; padding: 0; margin: 2rem 0;">
                         <li>✓ Up to 200 locations</li>
@@ -55,7 +55,7 @@
                 
                 <div class="pricing-card">
                     <h3>Enterprise Plus</h3>
-                    <div class="price">$60K+<span class="price-period">/year</span></div>
+                    <div class="price">$5,000+<span class="price-period">/month</span></div>
                     <p>For large-scale enterprise operations</p>
                     <ul style="text-align: left; list-style: none; padding: 0; margin: 2rem 0;">
                         <li>✓ Unlimited locations</li>
@@ -174,9 +174,9 @@
                             <td style="padding: 1rem; text-align: center; color: #ea580c;">Immediate</td>
                         </tr>
                         <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 1rem; font-weight: 600;">Annual Cost</td>
-                            <td style="padding: 1rem; text-align: center; color: #16a34a;">$12K - $60K</td>
-                            <td style="padding: 1rem; text-align: center; color: #dc2626;">$500K+</td>
+                            <td style="padding: 1rem; font-weight: 600;">Monthly Cost</td>
+                            <td style="padding: 1rem; text-align: center; color: #16a34a;">$1K - $5K</td>
+                            <td style="padding: 1rem; text-align: center; color: #dc2626;">$42K+</td>
                             <td style="padding: 1rem; text-align: center; color: #ea580c;">Free*</td>
                         </tr>
                         <tr style="border-bottom: 1px solid #e2e8f0;">
@@ -227,7 +227,7 @@ function calculateROI() {
         const excessSavings = revenue * (excessInventory / 100) * 0.68; // 68% reduction
         const stockoutSavings = revenue * (stockoutRate / 100) * 0.81; // 81% reduction
         const totalSavings = excessSavings + stockoutSavings;
-        const orderNimbusCost = revenue < 50000000 ? 12000 : (revenue < 200000000 ? 36000 : 60000);
+        const orderNimbusCost = revenue < 50000000 ? 12000 : (revenue < 200000000 ? 36000 : 60000); // Annual cost for calculation
         const netSavings = totalSavings - orderNimbusCost;
         const roiPercentage = ((netSavings / orderNimbusCost) * 100).toFixed(0);
         
